@@ -1,0 +1,72 @@
+import SvgIcon from '@mui/material/SvgIcon';
+
+export default function StxIcon() {
+  return (
+    <SvgIcon sx={{ height: 14, width: 220, mr: 2 }}>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" width="500" height="38.895" viewBox="0 0 500 38.895">
+        <defs>
+          <clipPath id="clip-path">
+            <rect id="Rectangle_148362" data-name="Rectangle 148362" width="500" height="38.894" fill="#4876EE" />
+          </clipPath>
+        </defs>
+        <g id="LOGO_HSE_STELLARIX" data-name="LOGO HSE STELLARIX" transform="translate(0 0.001)">
+
+          {/* *** ADDED HSE PREFIX START *** */}
+          <g id="HSE_Group" transform="translate(0 0)">
+            
+            {/* H (Custom path in the block-font style) 
+              - Starts at X=0
+            */}
+            <path id="H_Letter" data-name="H Letter" d="M0,0V38.79H8.775V23.79H30.095V38.79H38.87V0H30.095V15.013H8.775V0Z" fill="#4876EE" />
+            
+            {/* S (Copied from Tracé_18658) 
+              - Shifted right by 45 units to follow H
+            */}
+            <path id="S_Letter" data-name="S Letter" 
+              d="M.743,38.79.76,31.324H20.467c3.961,0,5.694-.921,5.694-3.382,0-2.57-2.146-3.76-6.327-4.49l-7.262-1.271c-4.209-.731-7.344-1.975-9.435-3.733S0,14.093,0,10.712C0,3.894,5.117,0,14.36,0H31.332l0,7.492H14.718c-3.961,0-5.694.865-5.694,3.057,0,2.38,2.09,3.435,6.3,4.192l7.509,1.326c4.209.757,7.069,1.812,9.188,3.624,2.118,1.84,3.136,4.464,3.136,8.061,0,7.033-5.116,11.037-14.359,11.037Z" 
+              transform="translate(45 0)" fill="#4876EE" />
+            
+            {/* E (Copied from Tracé_18654 and Tracé_18655) 
+              - Shifted right by 85 units to follow S
+            */}
+            <g id="E_Letter_Group" transform="translate(5 0)">
+                <path id="E_top" data-name="E top" d="M104.134,18.092H95.357V41.3h30.627V33.836H104.134V25.288h18.706v-7.2Z" transform="translate(-13.238 -2.512)" fill="#4876EE" />
+                <path id="E_bottom" data-name="E bottom" d="M95.358,0V7.492h30.626V0Z" transform="translate(-13.238 0)" fill="#4876EE" />
+            </g>
+
+          </g>
+          {/* *** ADDED HSE PREFIX END *** */}
+
+          {/* Original STELLARIX Paths - Shifted Right by 135 units to clear HSE */}
+          <g id="STELLARIX_Group" transform="translate(160 0)"> 
+            {/* T */}
+            <path id="Tracé_18650" data-name="Tracé 18650" d="M43.933,0V7.492H58.4v31.3h8.775V7.492h14.5V0Z" transform="translate(-6.099 0)" fill="#4876EE" />
+            {/* I */}
+            <rect id="Rectangle_148361" data-name="Rectangle 148361" width="8.775" height="38.79" transform="translate(254.855 -0.001)" fill="#4876EE" />
+            {/* A and L */}
+            <path id="Tracé_18651" data-name="Tracé 18651" d="M217.792,0,208.6,22.776h9.177l.233-.6,5.859-15.013h.925l5.8,15.013,2.862,7.466,3.548,9.142h9.408L230.584,0Z" transform="translate(-28.959 0)" fill="#4876EE" />
+            <path id="Tracé_18652" data-name="Tracé 18652" d="M180.972,0V38.79h26.74l2.9-7.466H189.747V0Z" transform="translate(-25.123 0)" fill="#4876EE" />
+            {/* R */}
+            <path id="Tracé_18653" data-name="Tracé 18653" d="M43.933,0V7.492H58.4v31.3h8.775V7.492h14.5V0Z" transform="translate(-6.099 0)" fill="#4876EE" />
+            {/* E (Part 1/2) */}
+            <path id="Tracé_18654" data-name="Tracé 18654" d="M104.134,18.092H95.357V41.3h30.627V33.836H104.134V25.288h18.706v-7.2Z" transform="translate(-13.238 -2.512)" fill="#4876EE" />
+            {/* E (Part 2/2) */}
+            <path id="Tracé_18655" data-name="Tracé 18655" d="M95.358,0V7.492h30.626V0Z" transform="translate(-13.238 0)" fill="#4876EE" />
+            {/* L */}
+            <path id="Tracé_18656" data-name="Tracé 18656" d="M140.914,0v38.79h27.557l.056-7.466H149.69V0Z" transform="translate(-19.562 0)" fill="#4876EE" />
+            {/* S (at end of STELLARIX) */}
+            <path id="Tracé_18657" data-name="Tracé 18657" d="M345.037,0,335.684,13.58,326.5,0H315.629l14.085,18.745L314.393,38.791h10.4l10.536-15.013,10.426,15.013h10.892L341.186,18.638,355.38,0Z" transform="translate(-43.645 0)" fill="#4876EE" />
+            <g id="Groupe_163748" data-name="Groupe 163748" transform="translate(0 0)">
+              <g id="Groupe_163747" data-name="Groupe 163747" clip-path="url(#clip-path)">
+                {/* S (First S of STELLARIX) */}
+                <path id="Tracé_18658" data-name="Tracé 18658" d="M.743,38.79.76,31.324H20.467c3.961,0,5.694-.921,5.694-3.382,0-2.57-2.146-3.76-6.327-4.49l-7.262-1.271c-4.209-.731-7.344-1.975-9.435-3.733S0,14.093,0,10.712C0,3.894,5.117,0,14.36,0H31.332l0,7.492H14.718c-3.961,0-5.694.865-5.694,3.057,0,2.38,2.09,3.435,6.3,4.192l7.509,1.326c4.209.757,7.069,1.812,9.188,3.624,2.118,1.84,3.136,4.464,3.136,8.061,0,7.033-5.116,11.037-14.359,11.037Z" transform="translate(0 0)" fill="#4876EE" />
+                {/* X */}
+                <path id="Tracé_18659" data-name="Tracé 18659" d="M275.056,24.325a12.348,12.348,0,0,0,2.771-2.924,12.126,12.126,0,0,0,1.632-3.6,15.6,15.6,0,0,0,.531-4.118,14.622,14.622,0,0,0-1.076-5.749,10.916,10.916,0,0,0-3.277-4.3A15.345,15.345,0,0,0,270.1.933,29.571,29.571,0,0,0,262.2,0H249.15l3.043,6.869H262.4q4.579,0,6.858,1.778a6.026,6.026,0,0,1,2.278,5.04,7.738,7.738,0,0,1-.57,3.024,5.893,5.893,0,0,1-1.721,2.3,8.265,8.265,0,0,1-2.859,1.467A13.659,13.659,0,0,1,262.4,21H257.74l8.148,17.892h9.741l-6.634-12.367c3.866-.615,4.947-1.348,6.061-2.2" transform="translate(-34.588 0)" fill="#4876EE" />
+              </g>
+            </g>
+          </g>
+        </g>
+      </svg>
+    </SvgIcon>
+  );
+}

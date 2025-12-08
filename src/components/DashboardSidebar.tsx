@@ -6,7 +6,7 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import type {} from '@mui/material/themeCssVarsAugmentation';
-import PersonIcon from '@mui/icons-material/Person';
+import SafetyCheckIcon from '@mui/icons-material/SafetyCheck';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
 import LayersIcon from '@mui/icons-material/Layers';
@@ -132,19 +132,19 @@ export default function DashboardSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            <DashboardSidebarHeaderItem>Main items</DashboardSidebarHeaderItem>
+            <DashboardSidebarHeaderItem>Taches principals</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
-              id="employees"
-              title="Employees"
-              icon={<PersonIcon />}
-              href="/employees"
-              selected={!!matchPath('/employees/*', pathname) || pathname === '/'}
+              id="toko5s"
+              title="TOKO 5"
+              icon={<SafetyCheckIcon />}
+              href="/toko5s"
+              selected={!!matchPath('/toko5s/*', pathname) || pathname === '/'}
             />
             <DashboardSidebarDividerItem />
-            <DashboardSidebarHeaderItem>Example items</DashboardSidebarHeaderItem>
+            <DashboardSidebarHeaderItem>Autre taches</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
-              id="reports"
-              title="Reports"
+              id="autre1"
+              title="autre1"
               icon={<BarChartIcon />}
               href="/reports"
               selected={!!matchPath('/reports', pathname)}
@@ -178,8 +178,8 @@ export default function DashboardSidebar({
               }
             />
             <DashboardSidebarPageItem
-              id="integrations"
-              title="Integrations"
+              id="autre2"
+              title="autre2"
               icon={<LayersIcon />}
               href="/integrations"
               selected={!!matchPath('/integrations', pathname)}

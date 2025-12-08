@@ -3,7 +3,7 @@ import useEventCallback from '@mui/utils/useEventCallback';
 import DialogsContext from './DialogsContext';
 import type { DialogComponent, OpenDialog, OpenDialogOptions } from './useDialogs';
 
-interface DialogStackEntry<P, R> {
+interface DialogStackEntry<P = unknown, R = unknown> {
   key: string;
   open: boolean;
   promise: Promise<R>;
@@ -24,11 +24,11 @@ export interface DialogProviderProps {
  */
 export default function DialogsProvider(props: DialogProviderProps) {
   const { children, unmountAfter = 1000 } = props;
-  const [stack, setStack] = React.useState<DialogStackEntry<any, any>[]>([]);
+  const [stack, setStack] = React.useState<Array<DialogStackEntry<unknown, unknown>>>([]);
   const keyPrefix = React.useId();
   const nextId = React.useRef(0);
   const dialogMetadata = React.useRef(
-    new WeakMap<Promise<any>, DialogStackEntry<any, any>>(),
+    new WeakMap<Promise<unknown>, DialogStackEntry<unknown, unknown>>(),
   );
 
   const requestDialog = useEventCallback<OpenDialog>(function open<P, R>(
@@ -59,10 +59,10 @@ export default function DialogsProvider(props: DialogProviderProps) {
       resolve,
     };
 
-    // Store metadata for reliable access during close
-    dialogMetadata.current.set(promise, newEntry);
+    // Use type assertion here
+    dialogMetadata.current.set(promise as Promise<unknown>, newEntry as DialogStackEntry<unknown, unknown>);
 
-    setStack((prevStack) => [...prevStack, newEntry]);
+    setStack((prevStack) => [...prevStack, newEntry as DialogStackEntry<unknown, unknown>]);
     return promise;
   });
 

@@ -6,7 +6,8 @@ import Toolbar from '@mui/material/Toolbar';
 import { Outlet } from 'react-router';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
-import SitemarkIcon from './SitemarkIcon';
+import StxIcon from './StxIcon';
+
 
 export default function DashboardLayout() {
   const theme = useTheme();
@@ -63,7 +64,7 @@ export default function DashboardLayout() {
       }}
     >
       <DashboardHeader
-        logo={<SitemarkIcon />}
+        logo={<StxIcon />}
         title=""
         menuOpen={isNavigationExpanded}
         onToggleMenu={handleToggleHeaderMenu}

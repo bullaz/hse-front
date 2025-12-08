@@ -1,12 +1,13 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { createHashRouter, RouterProvider } from 'react-router';
 import DashboardLayout from './components/DashboardLayout';
-import EmployeeList from './components/EmployeeList';
+// import EmployeeList from './components/EmployeeList';
 import EmployeeShow from './components/EmployeeShow';
 import EmployeeCreate from './components/EmployeeCreate';
 import EmployeeEdit from './components/EmployeeEdit';
 import NotificationsProvider from './hooks/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
+import Toko5List from './components/Toko5List';
 import AppTheme from './theme/AppTheme';
 import {
   dataGridCustomizations,
@@ -20,25 +21,25 @@ const router = createHashRouter([
     Component: DashboardLayout,
     children: [
       {
-        path: '/employees',
-        Component: EmployeeList,
+        path: '/toko5s',
+        Component: Toko5List,
       },
       {
-        path: '/employees/:employeeId',
+        path: '/toko5s/:employeeId',
         Component: EmployeeShow,
       },
       {
-        path: '/employees/new',
+        path: '/toko5s/new',
         Component: EmployeeCreate,
       },
       {
-        path: '/employees/:employeeId/edit',
+        path: '/toko5s/:employeeId/edit',
         Component: EmployeeEdit,
       },
       // Fallback route for the example routes in dashboard sidebar items
       {
         path: '*',
-        Component: EmployeeList,
+        Component: Toko5List,
       },
     ],
   },
