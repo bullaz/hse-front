@@ -9,6 +9,7 @@ import NotificationsProvider from './hooks/useNotifications/NotificationsProvide
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
 import Toko5List from './components/Toko5List';
 import AppTheme from './theme/AppTheme';
+import SignIn from './components/SignIn';
 import {
   dataGridCustomizations,
   datePickersCustomizations,
@@ -18,7 +19,12 @@ import {
 
 const router = createHashRouter([
   {
-    Component: DashboardLayout,
+    path: '/login',
+    element: <SignIn/>
+  },
+  {
+    path: '/',
+    element: <DashboardLayout />,
     children: [
       {
         path: '/toko5s',

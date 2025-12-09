@@ -38,7 +38,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function Toko5List() {
+export default function ListMesure() {
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();

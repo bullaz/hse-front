@@ -4,10 +4,10 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Divider from '@mui/material/Divider';
+//import Divider from '@mui/material/Divider';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
+//import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
@@ -16,7 +16,12 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPassword';
 import AppTheme from '../theme/AppTheme';
 import ColorModeSelect from '../theme/ColorModeSelect';
-import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
+//import { GoogleIcon, FacebookIcon } from './CustomIcons';
+import StxIcon from './StxIcon';
+import { useState } from 'react';
+import { Alert, CircularProgress } from '@mui/material';
+import { BACKEND_SERVER_URL } from '../constants';
+import axios from 'axios';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -61,58 +66,77 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
+
   const [emailError, setEmailError] = React.useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+
+  const [username, setUsername] = useState('');
+  const [password, setPassord] = useState('');
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<boolean>(false);
+
+  // const handleClickOpen = () => {
+  //   setOpen(true);
+  // };
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(false);
+    setLoading(true);
+    // if (emailError || passwordError) {
+    //   return;
+    // }
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    try {
+      const response = axios.post(BACKEND_SERVER_URL,{
+        username: data.get('username'),
+        password: data.get('password')
+      }) 
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      setError(true);
+    }finally{
+      setLoading(false);
+    }
   };
 
-  const validateInputs = () => {
-    const email = document.getElementById('email') as HTMLInputElement;
-    const password = document.getElementById('password') as HTMLInputElement;
+  // const validateInputs = () => {
+  //   //const email = document.getElementById('email') as HTMLInputElement;
+  //   const password = document.getElementById('password') as HTMLInputElement;
 
-    let isValid = true;
+  //   let isValid = true;
 
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
+  //   // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+  //   //   setEmailError(true);
+  //   //   setEmailErrorMessage('Please enter a valid email address.');
+  //   //   isValid = false;
+  //   // } else {
+  //   //   setEmailError(false);
+  //   //   setEmailErrorMessage('');
+  //   // }
 
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
+  //   if (!password.value || password.value.length < 6) {
+  //     setPasswordError(true);
+  //     setPasswordErrorMessage('Le mot de passe doit avoir au moins 6 characters.');
+  //     isValid = false;
+  //   } else {
+  //     setPasswordError(false);
+  //     setPasswordErrorMessage('');
+  //   }
 
-    return isValid;
-  };
+  //   return isValid;
+  // };
 
   return (
     <AppTheme {...props}>
@@ -120,13 +144,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       <SignInContainer direction="column" justifyContent="space-between">
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
-          <SitemarkIcon />
+          {/* <SitemarkIcon /> */}
+          <StxIcon />
           <Typography
             component="h1"
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
           >
-            Sign in
+            Identifiez-vous
           </Typography>
           <Box
             component="form"
@@ -140,14 +165,14 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             }}
           >
             <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
+              <FormLabel htmlFor="username">Email ou nom d'utilisateur</FormLabel>
               <TextField
                 error={emailError}
                 helperText={emailErrorMessage}
-                id="email"
-                type="email"
-                name="email"
-                placeholder="your@email.com"
+                id="username"
+                type="text"
+                name="username"
+                placeholder="votre@email.com"
                 autoComplete="email"
                 autoFocus
                 required
@@ -157,7 +182,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               />
             </FormControl>
             <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">Mot de passe</FormLabel>
               <TextField
                 error={passwordError}
                 helperText={passwordErrorMessage}
@@ -175,36 +200,55 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             </FormControl>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              label="se souvenir de moi"
             />
             <ForgotPassword open={open} handleClose={handleClose} />
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              onClick={validateInputs}
+            //onClick={validateInputs}
+              onClick={(e)=>{e.preventDefault()}}
             >
-              Sign in
+              Se connecter
             </Button>
-            <Link
+            {/* <Link
               component="button"
               type="button"
               onClick={handleClickOpen}
               variant="body2"
               sx={{ alignSelf: 'center' }}
             >
-              Forgot your password?
-            </Link>
+              Mot de passe oublie?
+            </Link> */}
+
+
+            {loading && (
+              <Box
+                display="flex"
+                justifyContent="center"
+                style={{ marginTop: "10px" }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
+
+            {error && (
+              <Alert variant="outlined" severity="error">
+                Nom d'utilisateur ou mot de passe erroné
+              </Alert>
+            )}
+
           </Box>
-          <Divider>or</Divider>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          {/* <Divider>ou</Divider> */}
+          {/* <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <Button
               fullWidth
               variant="outlined"
               onClick={() => alert('Sign in with Google')}
               startIcon={<GoogleIcon />}
             >
-              Sign in with Google
+              Se connecter avec Google
             </Button>
             <Button
               fullWidth
@@ -212,7 +256,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               onClick={() => alert('Sign in with Facebook')}
               startIcon={<FacebookIcon />}
             >
-              Sign in with Facebook
+              Se connecter Facebook
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               Don&apos;t have an account?{' '}
@@ -224,7 +268,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 Sign up
               </Link>
             </Typography>
-          </Box>
+          </Box> */}
         </Card>
       </SignInContainer>
     </AppTheme>
