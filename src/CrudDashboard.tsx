@@ -16,11 +16,13 @@ import {
   sidebarCustomizations,
   formInputCustomizations,
 } from './theme/customizations';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 const router = createHashRouter([
   {
     path: '/login',
-    element: <SignIn/>
+    element: <SignIn />
   },
   {
     path: '/',
@@ -28,7 +30,7 @@ const router = createHashRouter([
     children: [
       {
         path: '/toko5s',
-        Component: Toko5List,
+        element: <ProtectedRoute><Toko5List /></ProtectedRoute>,
       },
       {
         path: '/toko5s/:employeeId',
@@ -60,13 +62,15 @@ const themeComponents = {
 
 export default function CrudDashboard(props: { disableCustomTheme?: boolean }) {
   return (
-    <AppTheme {...props} themeComponents={themeComponents}>
-      <CssBaseline enableColorScheme />
-      <NotificationsProvider>
-        <DialogsProvider>
-          <RouterProvider router={router} />
-        </DialogsProvider>
-      </NotificationsProvider>
-    </AppTheme>
+    <AuthProvider>
+      <AppTheme {...props} themeComponents={themeComponents}>
+        <CssBaseline enableColorScheme />
+        <NotificationsProvider>
+          <DialogsProvider>
+            <RouterProvider router={router} />
+          </DialogsProvider>
+        </NotificationsProvider>
+      </AppTheme>
+    </AuthProvider>
   );
 }

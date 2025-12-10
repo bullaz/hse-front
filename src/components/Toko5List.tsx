@@ -35,10 +35,13 @@ import Link from '@mui/material/Link';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAuth } from '../context/AuthContext';
 
 const INITIAL_PAGE_SIZE = 10;
 
 export default function Toko5List() {
+
+  const {axiosInstance} = useAuth();
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();

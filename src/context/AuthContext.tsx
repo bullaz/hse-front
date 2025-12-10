@@ -1,78 +1,129 @@
 /* eslint-disable react-refresh/only-export-components */
 
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
-import type { ReactNode } from 'react';
 import axios from 'axios';
-import type { AuthContextType } from './auth.types';
+import type { AuthContextType, AuthProviderProps } from './auth.types';
+import { BACKEND_SERVER_URL } from '../constants';
 
-// Create context but don't export its type
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = BACKEND_SERVER_URL;
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(
-    localStorage.getItem('access_token')
-  );
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
-  
-  // Refs for managing refresh state
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+
   const isRefreshingRef = useRef(false);
   const refreshSubscribersRef = useRef<((token: string | null) => void)[]>([]);
-
-  // Check initial authentication on mount
-  useEffect(() => {
-    const checkAuth = async () => {
-      const token = localStorage.getItem('access_token');
-      if (token) {
-        // Optional: validate token on startup
-        try {
-          // You could add a token validation API call here
-          // await axios.get(`${BASE_URL}/validate`, {
-          //   headers: { Authorization: `Bearer ${token}` }
-          // });
-          setAccessToken(token);
-        } catch (error) {
-          console.log(error);
-          localStorage.removeItem('access_token');
-          setAccessToken(null);
-        }
-      }
-      setIsLoading(false);
-    };
-    
-    checkAuth();
-  }, []);
-
-  const logout = useCallback(() => {
-    localStorage.removeItem('access_token');
-    setAccessToken(null);
-    isRefreshingRef.current = false;
-    refreshSubscribersRef.current = [];
-    
-    axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true })
-      .catch(err => console.warn('Logout API call failed:', err));
-  }, []);
-
-  // Create axios instance
   const axiosInstance = useRef(axios.create({
     baseURL: BASE_URL,
     headers: {
       'Content-Type': 'application/json',
     },
-  })).current;
+  }));
 
-  // Setup interceptors
+
+  const updateToken = useCallback((token: string | null) => {
+    if (token) {
+      //sessionStorage.setItem('access_token', token);
+      setAccessToken(token);
+    } else {
+      sessionStorage.removeItem('access_token');
+      setAccessToken(null);
+    }
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await axios.post(`${BASE_URL}/logout`, {}, { withCredentials: true });
+    } catch (err) {
+      console.warn('Logout API call failed:', err);
+    } finally {
+      updateToken(null);
+      isRefreshingRef.current = false;
+      refreshSubscribersRef.current = [];
+    }
+  }, [updateToken]);
+
+  const refreshToken = useCallback(async (): Promise<string | null> => {
+    if (isRefreshingRef.current) {
+      return new Promise((resolve) => {
+        refreshSubscribersRef.current.push((token: string | null) => {
+          resolve(token);
+        });
+      });
+    }
+
+    isRefreshingRef.current = true;
+
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/refresh_token`,
+        {},
+        { withCredentials: true }
+      );
+
+      const newToken = response.data.access_token;
+      if (!newToken) {
+        throw new Error('No access token received from refresh');
+      }
+
+      updateToken(newToken);
+
+      // Notify all queued requests
+      refreshSubscribersRef.current.forEach(callback => callback(newToken));
+      refreshSubscribersRef.current = [];
+
+      return newToken;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+
+      // Notify all queued requests of failure
+      refreshSubscribersRef.current.forEach(callback => callback(null));
+      refreshSubscribersRef.current = [];
+
+      await logout();
+      return null;
+    } finally {
+      isRefreshingRef.current = false;
+    }
+  }, [logout, updateToken]);
+
+  // INITIALIZATION OF AUTHENTICATION STATE
+  const initializeAuth = useCallback(async () => {
+    const storedToken = sessionStorage.getItem('access_token');
+    //console.log('session token:', storedToken);
+
+    if (storedToken) {
+      try {
+        const response = await axios.post(`${BASE_URL}/verify_token`, {}, {
+          headers: { Authorization: `Bearer ${storedToken}` }
+        });
+        if (!response.data) {
+          throw new Error('Stored token is invalid');
+        }
+        setAccessToken(storedToken);
+      } catch (error) {
+        console.warn('Token validation failed:', error);
+        await refreshToken();
+      }
+    } else {
+      await refreshToken();
+    }
+
+  }, [refreshToken]);
+
+  // useEffect(() => {
+  //   console.log('loading state at authprovider render', isLoading);
+  // }, [isLoading]);
+
+
   useEffect(() => {
-    // Request interceptor
-    const requestInterceptor = axiosInstance.interceptors.request.use(
+    const instance = axiosInstance.current;
+
+    const requestInterceptor = instance.interceptors.request.use(
       (config) => {
-        const token = localStorage.getItem('access_token');
-        if (token) {
+        const token = accessToken;
+        if (token && !config.headers.Authorization) {
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
@@ -80,72 +131,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       (error) => Promise.reject(error)
     );
 
-    // Response interceptor
-    const responseInterceptor = axiosInstance.interceptors.response.use(
+    const responseInterceptor = instance.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          if (isRefreshingRef.current) {
-            // If already refreshing, wait for the new token
-            return new Promise((resolve, reject) => {
-              refreshSubscribersRef.current.push((token: string | null) => {
-                if (token) {
-                  originalRequest.headers.Authorization = `Bearer ${token}`;
-                  resolve(axiosInstance(originalRequest));
-                } else {
-                  reject(new Error('Authentication failed'));
-                }
-              });
-            });
-          }
-
-          originalRequest._retry = true;
-          isRefreshingRef.current = true;
-
-          try {
-            const response = await axios.post(
-              `${BASE_URL}/refresh_token`,
-              {},
-              { withCredentials: true }
-            );
-
-            const newToken = response.data.access_token;
-            localStorage.setItem('access_token', newToken);
-            setAccessToken(newToken);
-            
-            // Notify all waiting requests
-            refreshSubscribersRef.current.forEach(callback => callback(newToken));
-            refreshSubscribersRef.current = [];
-            
-            // Retry original request
-            originalRequest.headers.Authorization = `Bearer ${newToken}`;
-            return axiosInstance(originalRequest);
-          } catch (refreshError) {
-            // Notify all waiting requests of failure
-            refreshSubscribersRef.current.forEach(callback => callback(null));
-            refreshSubscribersRef.current = [];
-            logout();
-            return Promise.reject(refreshError);
-          } finally {
-            isRefreshingRef.current = false;
-          }
+        // Skip if already retried or not an auth error
+        if (!error.response ||
+          (error.response.status !== 401 && error.response.status !== 403) ||
+          originalRequest._retry) {
+          return Promise.reject(error);
         }
 
-        return Promise.reject(error);
+        originalRequest._retry = true;
+
+        try {
+          const newToken = await refreshToken();
+
+          if (newToken) {
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return instance(originalRequest);
+          } else {
+            return Promise.reject(new Error('Authentication failed'));
+          }
+        } catch (refreshError) {
+          return Promise.reject(refreshError);
+        }
       }
     );
 
-    // Cleanup interceptors
     return () => {
-      axiosInstance.interceptors.request.eject(requestInterceptor);
-      axiosInstance.interceptors.response.eject(responseInterceptor);
+      instance.interceptors.request.eject(requestInterceptor);
+      instance.interceptors.response.eject(responseInterceptor);
     };
-  }, [axiosInstance, logout]);
+  }, [accessToken, refreshToken]);
+
 
   const login = useCallback(async (username: string, password: string) => {
-    setIsLoading(true);
     try {
       const response = await axios.post(`${BASE_URL}/signin`, {
         username,
@@ -153,35 +175,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       const { access_token } = response.data;
-      
+
       if (!access_token) {
         throw new Error('No access token received');
       }
-      
-      localStorage.setItem('access_token', access_token);
-      setAccessToken(access_token);
-      
+
+      updateToken(access_token);
     } catch (error) {
       console.error('Login failed:', error);
       throw error;
     } finally {
-      setIsLoading(false);
+      //setIsLoading);
     }
-  }, []);
+  }, [updateToken]);
 
   const value: AuthContextType = {
+    initializeAuth,
     accessToken,
     isAuthenticated: !!accessToken,
-    isLoading,
     login,
     logout,
-    axiosInstance,
+    axiosInstance: axiosInstance.current,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Custom hook - this is allowed because it's a React hook
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {

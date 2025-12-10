@@ -22,6 +22,9 @@ import { useState } from 'react';
 import { Alert, CircularProgress } from '@mui/material';
 import { BACKEND_SERVER_URL } from '../constants';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
+import { flushSync } from 'react-dom';
+//import { useAuth } from '../context/AuthContext';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -67,18 +70,21 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
+  //const [emailError, setEmailError] = React.useState(false);
+  //const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
 
 
-  const [username, setUsername] = useState('');
-  const [password, setPassord] = useState('');
+  // const [username, setUsername] = useState('');
+  // const [password, setPassord] = useState('');
+  //const { login } = useAuth();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
+
+  const navigate = useNavigate();
 
   // const handleClickOpen = () => {
   //   setOpen(true);
@@ -90,53 +96,66 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(false);
-    setLoading(true);
+
+    if(!validateInputs()){
+      throw new Error("Invalid inputs");
+    }
+
+
+    flushSync(() => {
+      setError(false);
+      setLoading(true);
+    });
+
     // if (emailError || passwordError) {
     //   return;
     // }
+
+    //console.log("Submitting form...");
     const data = new FormData(event.currentTarget);
 
     try {
-      const response = axios.post(BACKEND_SERVER_URL,{
+      const response = await axios.post(BACKEND_SERVER_URL + "/signin", {
         username: data.get('username'),
         password: data.get('password')
-      }) 
-      console.log(response);
+      })
+      sessionStorage.setItem('access_token', response.data.access_token);
+      //login(data.get('username') as string, data.get('password') as string);    
+      navigate('/toko5s/')
     } catch (error) {
       console.log(error);
       setError(true);
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
-  // const validateInputs = () => {
-  //   //const email = document.getElementById('email') as HTMLInputElement;
-  //   const password = document.getElementById('password') as HTMLInputElement;
+  const validateInputs = () => {
+    //const email = document.getElementById('email') as HTMLInputElement;
+    const password = document.getElementById('password') as HTMLInputElement;
 
-  //   let isValid = true;
+    let isValid = true;
 
-  //   // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-  //   //   setEmailError(true);
-  //   //   setEmailErrorMessage('Please enter a valid email address.');
-  //   //   isValid = false;
-  //   // } else {
-  //   //   setEmailError(false);
-  //   //   setEmailErrorMessage('');
-  //   // }
+    // if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+    //   setEmailError(true);
+    //   setEmailErrorMessage('Please enter a valid email address.');
+    //   isValid = false;
+    // } else {
+    //   setEmailError(false);
+    //   setEmailErrorMessage('');
+    // }
 
-  //   if (!password.value || password.value.length < 6) {
-  //     setPasswordError(true);
-  //     setPasswordErrorMessage('Le mot de passe doit avoir au moins 6 characters.');
-  //     isValid = false;
-  //   } else {
-  //     setPasswordError(false);
-  //     setPasswordErrorMessage('');
-  //   }
+    if (!password.value || password.value.length < 6) {
+      setPasswordError(true);
+      setPasswordErrorMessage('Le mot de passe doit avoir au moins 6 characters.');
+      isValid = false;
+    } else {
+      setPasswordError(false);
+      setPasswordErrorMessage('');
+    }
 
-  //   return isValid;
-  // };
+    return isValid;
+  };
 
   return (
     <AppTheme {...props}>
@@ -145,13 +164,16 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         <ColorModeSelect sx={{ position: 'fixed', top: '1rem', right: '1rem' }} />
         <Card variant="outlined">
           {/* <SitemarkIcon /> */}
-          <StxIcon />
+          <Box display="flex" justifyContent="center">
+            <StxIcon/>  
+          </Box>
           <Typography
             component="h1"
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+            // align="center"
           >
-            Identifiez-vous
+            Identification
           </Typography>
           <Box
             component="form"
@@ -167,8 +189,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             <FormControl>
               <FormLabel htmlFor="username">Email ou nom d'utilisateur</FormLabel>
               <TextField
-                error={emailError}
-                helperText={emailErrorMessage}
+                //error={emailError}
+                //helperText={emailErrorMessage}
                 id="username"
                 type="text"
                 name="username"
@@ -178,7 +200,8 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 required
                 fullWidth
                 variant="outlined"
-                color={emailError ? 'error' : 'primary'}
+                color={'primary'}
+                //color={emailError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>
@@ -208,7 +231,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
               fullWidth
               variant="contained"
             //onClick={validateInputs}
-              onClick={(e)=>{e.preventDefault()}}
+            //onClick={(e)=>{e.preventDefault(); handleSubmit(e)}}
             >
               Se connecter
             </Button>
