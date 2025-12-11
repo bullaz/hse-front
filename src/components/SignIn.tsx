@@ -118,7 +118,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       const response = await axios.post(BACKEND_SERVER_URL + "/signin", {
         username: data.get('username'),
         password: data.get('password')
-      })
+      },{withCredentials: true});
       sessionStorage.setItem('access_token', response.data.access_token);
       //login(data.get('username') as string, data.get('password') as string);    
       navigate('/toko5s/')

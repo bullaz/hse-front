@@ -38,9 +38,9 @@ export interface Toko5 {
 const INITIAL_LIST_TOKO5: Toko5[] = [
     {
         toko5Id: "befe1e48-cde9-49ef-bae8-8ca64a7900f5 ",
-        nomContractant: 'Edward',
-        prenomContractant: 'Perry',
-        dateHeure: new Date('2025-07-16T00:00:00.000Z'),
+        nomContractant: 'Rakoto',
+        prenomContractant: 'Jean',
+        dateHeure: new Date('2025-12-11T00:00:00.000Z'),
         etat: 'valide',
         listCommentaire: [{
             commentaireId: 0,
@@ -79,7 +79,7 @@ const INITIAL_LIST_TOKO5: Toko5[] = [
         toko5Id: "15a8d753-b64c-48d4-befc-e06533dcb619 ",
         nomContractant: 'Rakoto',
         prenomContractant: 'Jean',
-        dateHeure: new Date('2025-07-16T00:00:00.000Z'),
+        dateHeure: new Date('2025-12-11T00:00:00.000Z'),
         etat: 'valide',
         listCommentaire: [{
             commentaireId: 0,

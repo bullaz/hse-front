@@ -45,6 +45,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [updateToken]);
 
   const refreshToken = useCallback(async (): Promise<string | null> => {
+    console.log("Refreshing token...");
     if (isRefreshingRef.current) {
       return new Promise((resolve) => {
         refreshSubscribersRef.current.push((token: string | null) => {
@@ -56,11 +57,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isRefreshingRef.current = true;
 
     try {
+      console.log('before calling refresh api');
+
       const response = await axios.post(
         `${BASE_URL}/refresh_token`,
         {},
         { withCredentials: true }
       );
+
+      console.log('refresh response',response);
 
       const newToken = response.data.access_token;
       if (!newToken) {
@@ -75,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return newToken;
     } catch (error) {
-      console.error('Token refresh failed:', error);
+      console.log('Token refresh failed:', error);
 
       // Notify all queued requests of failure
       refreshSubscribersRef.current.forEach(callback => callback(null));
@@ -90,6 +95,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   // INITIALIZATION OF AUTHENTICATION STATE
   const initializeAuth = useCallback(async () => {
+    console.log('Initializing auth state...');
     const storedToken = sessionStorage.getItem('access_token');
     //console.log('session token:', storedToken);
 
@@ -98,12 +104,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const response = await axios.post(`${BASE_URL}/verify_token`, {}, {
           headers: { Authorization: `Bearer ${storedToken}` }
         });
-        if (!response.data) {
+        console.log("token state",response.data);
+        if (!response.data.token_state) {
           throw new Error('Stored token is invalid');
         }
         setAccessToken(storedToken);
       } catch (error) {
-        console.warn('Token validation failed:', error);
+        console.log('Token validation failed:', error);
         await refreshToken();
       }
     } else {
@@ -125,10 +132,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const token = accessToken;
         if (token && !config.headers.Authorization) {
           config.headers.Authorization = `Bearer ${token}`;
+          //config.withCredentials = true;
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => {Promise.reject(error)}
     );
 
     const responseInterceptor = instance.interceptors.response.use(
@@ -182,7 +190,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       updateToken(access_token);
     } catch (error) {
-      console.error('Login failed:', error);
+      console.log('Login failed:', error);
       throw error;
     } finally {
       //setIsLoading);
