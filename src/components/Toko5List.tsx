@@ -33,8 +33,11 @@ import {
 import PageContainer from './PageContainer';
 import Link from '@mui/material/Link';
 import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+//import { flushSync } from 'react-dom';
 //import { useAuth } from '../context/AuthContext';
 
 const INITIAL_PAGE_SIZE = 10;
@@ -46,28 +49,50 @@ export default function Toko5List() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const {axiosInstance} = useAuth();
+  const [listToko5, setListToko5] = useState<Toko5[]>([]);
+
+  const [date, setDate] = useState<Dayjs>(dayjs());
+
+  // const handleDateChange = (newValue) => {
+  //   setSelectedDate(newValue);
+    
+  //   // 3. Access and format the date value for use (e.g., send to an API).
+  //   if (newValue) {
+  //     // Format the dayjs object into a standard ISO string (YYYY-MM-DD)
+  //     const dateISOString = newValue.toISOString(); 
+  //     // Or format it into a specific string format for display
+  //     const formattedDate = newValue.format('MM-DD-YYYY'); 
+
+  //     console.log('Raw date object:', newValue);
+  //     console.log('ISO String:', dateISOString);
+  //     console.log('Formatted Date:', formattedDate);
+  //   } else {
+  //     console.log('Date cleared, value is null');
+  //   }
+  // };
 
   const dialogs = useDialogs();
   const notifications = useNotifications();
 
-  const [paginationModel, setPaginationModel] = React.useState<GridPaginationModel>({
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
     pageSize: searchParams.get('pageSize')
       ? Number(searchParams.get('pageSize'))
       : INITIAL_PAGE_SIZE,
   });
 
-  const [filterModel, setFilterModel] = React.useState<GridFilterModel>(
+  const [filterModel, setFilterModel] = useState<GridFilterModel>(
     searchParams.get('filter')
       ? JSON.parse(searchParams.get('filter') ?? '')
       : { items: [] },
   );
 
-  const [sortModel, setSortModel] = React.useState<GridSortModel>(
+  const [sortModel, setSortModel] = useState<GridSortModel>(
     searchParams.get('sort') ? JSON.parse(searchParams.get('sort') ?? '') : [],
   );
 
-  const [rowsState, setRowsState] = React.useState<{
+  const [rowsState, setRowsState] = useState<{
     rows: Toko5[];
     rowCount: number;
   }>({
@@ -75,8 +100,8 @@ export default function Toko5List() {
     rowCount: 0,
   });
 
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [error, setError] = React.useState<Error | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   const handlePaginationModelChange = React.useCallback(
     (model: GridPaginationModel) => {
@@ -139,11 +164,19 @@ export default function Toko5List() {
     setError(null);
     setIsLoading(true);
 
+    console.log('date', date.toISOString().split('T')[0]);
+
+    const toko5sReponse = await axiosInstance.get("/toko5s",{params: {date: date.toISOString().split('T')[0]}});
+    const list = toko5sReponse.data as Toko5[];
+    //console.log("list toko5 from api", list);
+    setListToko5(list);
+
     try {
       const listData = await getToko5s({
         paginationModel,
         sortModel,
         filterModel,
+        listToko5: list,
       });
 
       setRowsState({
@@ -155,7 +188,7 @@ export default function Toko5List() {
     }
 
     setIsLoading(false);
-  }, [paginationModel, sortModel, filterModel]);
+  }, [paginationModel, sortModel, filterModel, axiosInstance, date]);
 
   React.useEffect(() => {
     loadData();
@@ -253,7 +286,7 @@ export default function Toko5List() {
         field: 'listMesureControle',
         headerName: 'Mesures de controle',
         width: 190,
-        align: 'center',
+        //align: 'center',
         //valueGetter: (value: unknown[]) => value.length
         renderCell: (params: GridCellParams) => {
           const onClick = () => {
@@ -270,7 +303,7 @@ export default function Toko5List() {
         field: 'listCommentaire',
         headerName: 'Commentaires',
         width: 190,
-        align: 'center',
+        //align: 'center',
         //valueGetter: (value: unknown[]) => value.length
         renderCell: (params: GridCellParams) => {
           const onClick = () => {
@@ -310,6 +343,14 @@ export default function Toko5List() {
   const pageTitle1 = 'TOKO 5';
   const pageTitle2 = '';
 
+  const handleDateChange = (newValue: Dayjs | null) => {
+    if (newValue !== null){
+      setDate(newValue);
+      console.log('new date', newValue.toISOString().split('T')[0]);
+    }
+  }
+
+
   return (
     <PageContainer
       title={pageTitle1}
@@ -333,7 +374,7 @@ export default function Toko5List() {
           {/* <DemoItem label="Desktop variant">
           </DemoItem> */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker defaultValue={dayjs()} />
+            <DesktopDatePicker value={date} onChange={handleDateChange}/>
           </LocalizationProvider>
         </Stack>
       }
