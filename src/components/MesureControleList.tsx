@@ -53,13 +53,13 @@ export default function MesureControleList() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {axiosInstance} = useAuth();
+  const { axiosInstance } = useAuth();
   const { toko5Id } = useParams<ComsParams>();
   //const [listToko5, setListToko5] = useState<Toko5[]>([]);
 
   // const handleDateChange = (newValue) => {
   //   setSelectedDate(newValue);
-    
+
   //   // 3. Access and format the date value for use (e.g., send to an API).
   //   if (newValue) {
   //     // Format the dayjs object into a standard ISO string (YYYY-MM-DD)
@@ -169,7 +169,7 @@ export default function MesureControleList() {
 
     //console.log('date', date.toISOString().split('T')[0]);
 
-    const mesureReponse = await axiosInstance.get(`/toko5s/toko5/${toko5Id}/mesures`,{params: {}});
+    const mesureReponse = await axiosInstance.get(`/toko5s/toko5/${toko5Id}/mesures`, { params: {} });
     const list = mesureReponse.data as MesureControle[];
     //console.log("list toko5 from api", list);
     //setListToko5(list);
@@ -261,16 +261,17 @@ export default function MesureControleList() {
   const columns = React.useMemo<GridColDef[]>(
     () => [
       // { field: 'toko5Id', headerName: 'ID' },
-      { field: 'question', headerName: 'danger/risque', width: 200,
+      {
+        field: 'question', headerName: 'danger/risque', width: 200,
         renderCell: (params: GridCellParams) => {
-                    {/*color="inherit"*/}
-                    const question = params.value as Question;
-                    //return <Link href={`/#/toko5s/toko5/${id}/comments`} onClick={onClick} variant="body2" color={"#4876ee"} >{params.value.length} commentaire(s)</Link>
-                    return <>{question.nom}</>
-                  },
-       },
+          {/*color="inherit"*/ }
+          const question = params.value as Question;
+          //return <Link href={`/#/toko5s/toko5/${id}/comments`} onClick={onClick} variant="body2" color={"#4876ee"} >{params.value.length} commentaire(s)</Link>
+          return <>{question.nom}</>
+        },
+      },
+      { field: 'implemented', headerName: 'mise en place', width: 190, type: 'boolean' },
       { field: 'mesurePrise', headerName: 'Mesure prise', width: 600 },
-      { field: 'implemented', headerName: 'mise en place', width: 150, type: 'boolean'},
       {
         field: 'actions',
         type: 'actions',
@@ -297,32 +298,32 @@ export default function MesureControleList() {
     <PageContainer
       title={pageTitle1}
       breadcrumbs={[
-        { title: 'toko5s', path: '/toko5s' },
+        { title: 'liste des toko 5', path: '/toko5s' },
         { title: 'Comments' }
       ]}
-      // actions={
-      //   <Stack direction="row" alignItems="center" spacing={1}>
-      //     <Tooltip title="Reload data" placement="right" enterDelay={1000}>
-      //       <div>
-      //         <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
-      //           <RefreshIcon />
-      //         </IconButton>
-      //       </div>
-      //     </Tooltip>
-      //     {/* <Button
-      //       variant="contained"
-      //       onClick={handleCreateClick}
-      //       startIcon={<AddIcon />}
-      //     >
-      //       Date
-      //     </Button> */}
-      //     {/* <DemoItem label="Desktop variant">
-      //     </DemoItem> */}
-      //     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      //       <DesktopDatePicker value={date} onChange={handleDateChange}/>
-      //     </LocalizationProvider>
-      //   </Stack>
-      // }
+    // actions={
+    //   <Stack direction="row" alignItems="center" spacing={1}>
+    //     <Tooltip title="Reload data" placement="right" enterDelay={1000}>
+    //       <div>
+    //         <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
+    //           <RefreshIcon />
+    //         </IconButton>
+    //       </div>
+    //     </Tooltip>
+    //     {/* <Button
+    //       variant="contained"
+    //       onClick={handleCreateClick}
+    //       startIcon={<AddIcon />}
+    //     >
+    //       Date
+    //     </Button> */}
+    //     {/* <DemoItem label="Desktop variant">
+    //     </DemoItem> */}
+    //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+    //       <DesktopDatePicker value={date} onChange={handleDateChange}/>
+    //     </LocalizationProvider>
+    //   </Stack>
+    // }
     >
       <Box sx={{ flex: 1, width: '100%' }}>
         {error ? (

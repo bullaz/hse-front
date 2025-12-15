@@ -15,14 +15,20 @@ import type {
   GridFilterModel,
   GridPaginationModel,
   GridSortModel,
-  GridEventListener,
+  //GridEventListener,
   GridCellParams,
 } from '@mui/x-data-grid';
 //import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 //import EditIcon from '@mui/icons-material/Edit';
-import QrCode from '@mui/icons-material/QrCode';
+import QrCodeIcon from '@mui/icons-material/QrCode';
 import DeleteIcon from '@mui/icons-material/Delete';
+import HourglassBottomIcon from '@mui/icons-material/HourglassBottom';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import WarningIcon from '@mui/icons-material/Warning';
+
+import QRCode from "react-qr-code";
+
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
@@ -39,10 +45,42 @@ import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
+import { Modal, Typography } from '@mui/material';
 //import { flushSync } from 'react-dom';
 //import { useAuth } from '../context/AuthContext';
 
 const INITIAL_PAGE_SIZE = 10;
+
+const modalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  //border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+
+const qrModalStyle = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 300,
+  borderRadius: 5,
+  bgcolor: 'ghostwhite',
+  //border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  justifyContent: 'center',
+  alignItems: 'center',
+  alignContent: 'center'
+};
 
 export default function Toko5List() {
 
@@ -51,14 +89,27 @@ export default function Toko5List() {
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {axiosInstance} = useAuth();
+  const { axiosInstance } = useAuth();
   //const [listToko5, setListToko5] = useState<Toko5[]>([]);
 
   const [date, setDate] = useState<Dayjs>(dayjs());
 
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+
+  const [currentQr, setCurrentQr] = useState<string>('');
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+
+   const handleQrModalOpen = React.useCallback((uuid: string) => {
+    setCurrentQr(uuid);
+    setQrModalOpen(true);
+  }, []);
+  const handleQrModalClose = () => setQrModalOpen(false);
+
   // const handleDateChange = (newValue) => {
   //   setSelectedDate(newValue);
-    
+
   //   // 3. Access and format the date value for use (e.g., send to an API).
   //   if (newValue) {
   //     // Format the dayjs object into a standard ISO string (YYYY-MM-DD)
@@ -168,7 +219,7 @@ export default function Toko5List() {
 
     console.log('date', date.toISOString().split('T')[0]);
 
-    const toko5sReponse = await axiosInstance.get("/toko5s",{params: {date: date.toISOString().split('T')[0]}});
+    const toko5sReponse = await axiosInstance.get("/toko5s", { params: { date: date.toISOString().split('T')[0] } });
     const list = toko5sReponse.data as Toko5[];
     //console.log("list toko5 from api", list);
     //setListToko5(list);
@@ -202,23 +253,23 @@ export default function Toko5List() {
     }
   }, [isLoading, loadData]);
 
-  const handleRowClick = React.useCallback<GridEventListener<'rowClick'>>(
-    ({ row }) => {
-      navigate(`/employees/${row.id}`);
-    },
-    [navigate],
-  );
+  // const handleRowClick = React.useCallback<GridEventListener<'rowClick'>>(
+  //   ({ row }) => {
+  //     navigate(`/employees/${row.id}`);
+  //   },
+  //   [navigate],
+  // );
 
   // const handleCreateClick = React.useCallback(() => {
   //   navigate('/employees/new');
   // }, [navigate]);
 
-  const handleRowEdit = React.useCallback(
-    (toko5: Toko5) => () => {
-      navigate(`/toko5s/${toko5.toko5Id}/edit`);
-    },
-    [navigate],
-  );
+  // const handleRowEdit = React.useCallback(
+  //   (toko5: Toko5) => () => {
+  //     navigate(`/toko5s/${toko5.toko5Id}/edit`);
+  //   },
+  //   [navigate],
+  // );
 
   const handleRowDelete = React.useCallback(
     (toko5: Toko5) => async () => {
@@ -272,9 +323,9 @@ export default function Toko5List() {
       {
         field: 'dateHeure',
         headerName: 'Date et heure',
-        type: 'date',
-        valueGetter: (value) => value && new Date(value),
-        width: 140,
+        //type: 'date',
+        valueGetter: (value) => value && new Date(value).toLocaleString(),
+        width: 190,
       },
       // {
       //   field: 'role',
@@ -283,7 +334,6 @@ export default function Toko5List() {
       //   valueOptions: ['Market', 'Finance', 'Development'],
       //   width: 160,
       // },
-      { field: 'etat', headerName: 'État', type: 'boolean' },
       {
         field: 'listMesureControle',
         headerName: 'Mesures de controle',
@@ -295,7 +345,7 @@ export default function Toko5List() {
             // alert(`Row test`);
           };
           if (Array.isArray(params.value) && params.value.length > 0) {
-            {/*color="inherit"*/}
+            {/*color="inherit"*/ }
             const listComs = params.value as Commentaire[];
             const id = listComs[0].toko5Id;
             return <Link href={`/#/toko5s/toko5/${id}/mesures`} onClick={onClick} variant="body2" color={"#4876ee"}>{params.value.length} mesure(s) prise(s)</Link>
@@ -307,7 +357,7 @@ export default function Toko5List() {
       {
         field: 'listCommentaire',
         headerName: 'Commentaires',
-        width: 190,
+        width: 170,
         //align: 'center',
         //valueGetter: (value: unknown[]) => value.length
         renderCell: (params: GridCellParams) => {
@@ -315,7 +365,7 @@ export default function Toko5List() {
             // alert(`Row test`);
           };
           if (Array.isArray(params.value) && params.value.length > 0) {
-            {/*color="inherit"*/}
+            {/*color="inherit"*/ }
             const listComs = params.value as Commentaire[];
             const id = listComs[0].toko5Id;
             return <Link href={`/#/toko5s/toko5/${id}/comments`} onClick={onClick} variant="body2" color={"#4876ee"} >{params.value.length} commentaire(s)</Link>
@@ -325,17 +375,40 @@ export default function Toko5List() {
         },
       },
       {
+        field: 'etat', headerName: 'État',
+        width: 90,
+        renderCell: (params: GridCellParams) => {
+          switch (params.value) {
+            case 'ongoing':
+              return <IconButton aria-label="en cours" color="primary">
+                <HourglassBottomIcon />
+              </IconButton>;
+            case 'valide':
+              return <IconButton aria-label="valide" color="primary">
+                <AssignmentTurnedInIcon />
+              </IconButton>;
+            case 'invalide':
+              return <IconButton aria-label="invalide" color="primary" onClick={handleModalOpen}>
+                <WarningIcon sx={{ color: 'rgba(239, 253, 43, 0.87)' }} />
+              </IconButton>;
+          }
+        },
+      },
+      {
+        field: 'toko5Id',
+        headerName: 'QR',
+        renderCell: (params: GridCellParams) => {
+          return <IconButton aria-label="invalide" color="primary" onClick={() => {handleQrModalOpen(String(params.value))}}>
+            <QrCodeIcon />
+          </IconButton>;
+        }
+      },
+      {
         field: 'actions',
         type: 'actions',
         flex: 1,
         align: 'right',
         getActions: ({ row }) => [
-          <GridActionsCellItem
-            key="edit-item"
-            icon={<QrCode />}
-            label="Edit"
-            onClick={handleRowEdit(row)}
-          />,
           <GridActionsCellItem
             key="delete-item"
             icon={<DeleteIcon />}
@@ -345,14 +418,14 @@ export default function Toko5List() {
         ],
       },
     ],
-    [handleRowEdit, handleRowDelete],
+    [handleRowDelete, handleQrModalOpen],
   );
 
   const pageTitle1 = 'LISTE DES TOKO 5';
-  const pageTitle2 = 'liste des toko5';
+  const pageTitle2 = 'liste des toko 5';
 
   const handleDateChange = (newValue: Dayjs | null) => {
-    if (newValue !== null){
+    if (newValue !== null) {
       setDate(newValue);
       console.log('new date', newValue.toISOString().split('T')[0]);
     }
@@ -382,7 +455,7 @@ export default function Toko5List() {
           {/* <DemoItem label="Desktop variant">
           </DemoItem> */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker value={date} onChange={handleDateChange}/>
+            <DesktopDatePicker value={date} onChange={handleDateChange} />
           </LocalizationProvider>
         </Stack>
       }
@@ -409,7 +482,7 @@ export default function Toko5List() {
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
             disableRowSelectionOnClick
-            onRowClick={handleRowClick}
+            //onRowClick={handleRowClick}
             loading={isLoading}
             initialState={initialState}
             showToolbar
@@ -439,6 +512,33 @@ export default function Toko5List() {
           />
         )}
       </Box>
+
+      <Modal
+        open={modalOpen}
+        onClose={handleModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Text in a modal
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+          </Typography>
+        </Box>
+      </Modal>
+
+      <Modal
+        open={qrModalOpen}
+        onClose={handleQrModalClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={qrModalStyle}>
+          <QRCode value={currentQr}/>
+        </Box>
+      </Modal>
     </PageContainer>
   );
 }

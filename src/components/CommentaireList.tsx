@@ -288,7 +288,7 @@ export default function CommentaireList() {
     <PageContainer
       title={pageTitle1}
       breadcrumbs={[
-        { title: 'toko5s', path: '/toko5s' },
+        { title: 'liste des toko 5', path: '/toko5s' },
         { title: 'Comments' }
       ]}
       // actions={
