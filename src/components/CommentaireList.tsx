@@ -2,9 +2,9 @@ import * as React from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 //import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
-import Tooltip from '@mui/material/Tooltip';
+// import IconButton from '@mui/material/IconButton';
+// import Stack from '@mui/material/Stack';
+// import Tooltip from '@mui/material/Tooltip';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -15,28 +15,23 @@ import type {
   GridFilterModel,
   GridPaginationModel,
   GridSortModel,
-  GridEventListener,
-  GridCellParams,
 } from '@mui/x-data-grid';
 //import AddIcon from '@mui/icons-material/Add';
-import RefreshIcon from '@mui/icons-material/Refresh';
+// import RefreshIcon from '@mui/icons-material/Refresh';
 //import EditIcon from '@mui/icons-material/Edit';
-import QrCode from '@mui/icons-material/QrCode';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
 import {
-  //deleteOne as deleteToko5,
-  getMany as getToko5s,
-  type Toko5,
-  type Commentaire,
+  getManyComments as getComs,
+  type Commentaire
 } from '../data/Toko5';
 import PageContainer from './PageContainer';
-import Link from '@mui/material/Link';
-import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+// import Link from '@mui/material/Link';
+// import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+// import dayjs, { Dayjs } from 'dayjs';
+// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 //import { flushSync } from 'react-dom';
@@ -44,7 +39,12 @@ import { useState } from 'react';
 
 const INITIAL_PAGE_SIZE = 10;
 
-export default function Toko5List() {
+interface ComsParams {
+  [key: string]: string | undefined;
+  toko5Id: string;
+}
+
+export default function CommentaireList() {
 
   //const {axiosInstance} = useAuth();
 
@@ -52,9 +52,8 @@ export default function Toko5List() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const {axiosInstance} = useAuth();
+  const { toko5Id } = useParams<ComsParams>();
   //const [listToko5, setListToko5] = useState<Toko5[]>([]);
-
-  const [date, setDate] = useState<Dayjs>(dayjs());
 
   // const handleDateChange = (newValue) => {
   //   setSelectedDate(newValue);
@@ -95,7 +94,7 @@ export default function Toko5List() {
   );
 
   const [rowsState, setRowsState] = useState<{
-    rows: Toko5[];
+    rows: Commentaire[];
     rowCount: number;
   }>({
     rows: [],
@@ -166,19 +165,19 @@ export default function Toko5List() {
     setError(null);
     setIsLoading(true);
 
-    console.log('date', date.toISOString().split('T')[0]);
+    //console.log('date', date.toISOString().split('T')[0]);
 
-    const toko5sReponse = await axiosInstance.get("/toko5s",{params: {date: date.toISOString().split('T')[0]}});
-    const list = toko5sReponse.data as Toko5[];
+    const commentsReponse = await axiosInstance.get(`/toko5s/toko5/${toko5Id}/comments`,{params: {}});
+    const list = commentsReponse.data as Commentaire[];
     //console.log("list toko5 from api", list);
     //setListToko5(list);
 
     try {
-      const listData = await getToko5s({
+      const listData = await getComs({
         paginationModel,
         sortModel,
         filterModel,
-        listToko5: list,
+        listCommentaire: list,
       });
 
       setRowsState({
@@ -190,40 +189,33 @@ export default function Toko5List() {
     }
 
     setIsLoading(false);
-  }, [paginationModel, sortModel, filterModel, axiosInstance, date]);
+  }, [paginationModel, sortModel, filterModel, axiosInstance, toko5Id]);
 
   React.useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const handleRefresh = React.useCallback(() => {
-    if (!isLoading) {
-      loadData();
-    }
-  }, [isLoading, loadData]);
-
-  const handleRowClick = React.useCallback<GridEventListener<'rowClick'>>(
-    ({ row }) => {
-      navigate(`/employees/${row.id}`);
-    },
-    [navigate],
-  );
+  // const handleRefresh = React.useCallback(() => {
+  //   if (!isLoading) {
+  //     loadData();
+  //   }
+  // }, [isLoading, loadData]);
 
   // const handleCreateClick = React.useCallback(() => {
   //   navigate('/employees/new');
   // }, [navigate]);
 
-  const handleRowEdit = React.useCallback(
-    (toko5: Toko5) => () => {
-      navigate(`/toko5s/${toko5.toko5Id}/edit`);
-    },
-    [navigate],
-  );
+  // const handleRowEdit = React.useCallback(
+  //   (toko5: Commentaire) => () => {
+  //     navigate(`/toko5s/${toko5.toko5Id}/edit`);
+  //   },
+  //   [navigate],
+  // );
 
   const handleRowDelete = React.useCallback(
-    (toko5: Toko5) => async () => {
+    (toko5: Commentaire) => async () => {
       const confirmed = await dialogs.confirm(
-        `Do you wish to delete ${toko5.prenomContractant}?`,
+        `Do you wish to delete ${toko5.nom}?`,
         {
           title: `Delete employee?`,
           severity: 'error',
@@ -267,75 +259,15 @@ export default function Toko5List() {
   const columns = React.useMemo<GridColDef[]>(
     () => [
       // { field: 'toko5Id', headerName: 'ID' },
-      { field: 'nomContractant', headerName: 'Nom du Contractant', width: 180 },
-      { field: 'prenomContractant', headerName: 'Prenom du Contractant', width: 180 },
-      {
-        field: 'dateHeure',
-        headerName: 'Date et heure',
-        type: 'date',
-        valueGetter: (value) => value && new Date(value),
-        width: 140,
-      },
-      // {
-      //   field: 'role',
-      //   headerName: 'Department',
-      //   type: 'singleSelect',
-      //   valueOptions: ['Market', 'Finance', 'Development'],
-      //   width: 160,
-      // },
-      { field: 'etat', headerName: 'État', type: 'boolean' },
-      {
-        field: 'listMesureControle',
-        headerName: 'Mesures de controle',
-        width: 190,
-        //align: 'center',
-        //valueGetter: (value: unknown[]) => value.length
-        renderCell: (params: GridCellParams) => {
-          const onClick = () => {
-            // alert(`Row test`);
-          };
-          if (Array.isArray(params.value) && params.value.length > 0) {
-            {/*color="inherit"*/}
-            const listComs = params.value as Commentaire[];
-            const id = listComs[0].toko5Id;
-            return <Link href={`/#/toko5s/toko5/${id}/mesures`} onClick={onClick} variant="body2" color={"#4876ee"}>{params.value.length} mesure(s) prise(s)</Link>
-          }
-          // return <Button variant="contained" color="primary" onClick={onClick}>{params.value.length}</Button>;
-          return <Link href="#" onClick={onClick} variant="body2" color="inherit">0 mesure(s) prise(s)</Link>
-        },
-      },
-      {
-        field: 'listCommentaire',
-        headerName: 'Commentaires',
-        width: 190,
-        //align: 'center',
-        //valueGetter: (value: unknown[]) => value.length
-        renderCell: (params: GridCellParams) => {
-          const onClick = () => {
-            // alert(`Row test`);
-          };
-          if (Array.isArray(params.value) && params.value.length > 0) {
-            {/*color="inherit"*/}
-            const listComs = params.value as Commentaire[];
-            const id = listComs[0].toko5Id;
-            return <Link href={`/#/toko5s/toko5/${id}/comments`} onClick={onClick} variant="body2" color={"#4876ee"} >{params.value.length} commentaire(s)</Link>
-          }
-          // return <Button variant="contained" color="primary" onClick={onClick}>{params.value.length}</Button>;
-          return <Link href="#" onClick={onClick} variant="body2" color="inherit">0 commentaire</Link>
-        },
-      },
+      { field: 'nom', headerName: 'Nom du Commentateur', width: 200 },
+      { field: 'prenom', headerName: 'Prenom du Commentateur', width: 230 },
+      { field: 'commentaire', headerName: 'Commentaire', width: 600 },
       {
         field: 'actions',
         type: 'actions',
         flex: 1,
         align: 'right',
         getActions: ({ row }) => [
-          <GridActionsCellItem
-            key="edit-item"
-            icon={<QrCode />}
-            label="Edit"
-            onClick={handleRowEdit(row)}
-          />,
           <GridActionsCellItem
             key="delete-item"
             icon={<DeleteIcon />}
@@ -345,47 +277,43 @@ export default function Toko5List() {
         ],
       },
     ],
-    [handleRowEdit, handleRowDelete],
+    [handleRowDelete],
   );
 
-  const pageTitle1 = 'LISTE DES TOKO 5';
-  const pageTitle2 = 'liste des toko5';
-
-  const handleDateChange = (newValue: Dayjs | null) => {
-    if (newValue !== null){
-      setDate(newValue);
-      console.log('new date', newValue.toISOString().split('T')[0]);
-    }
-  }
+  const pageTitle1 = 'COMMENTAIRES DU TOKO5 DE ?';
+  //const pageTitle2 = '';
 
 
   return (
     <PageContainer
       title={pageTitle1}
-      breadcrumbs={[{ title: pageTitle2 }]}
-      actions={
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <Tooltip title="Reload data" placement="right" enterDelay={1000}>
-            <div>
-              <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
-                <RefreshIcon />
-              </IconButton>
-            </div>
-          </Tooltip>
-          {/* <Button
-            variant="contained"
-            onClick={handleCreateClick}
-            startIcon={<AddIcon />}
-          >
-            Date
-          </Button> */}
-          {/* <DemoItem label="Desktop variant">
-          </DemoItem> */}
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DesktopDatePicker value={date} onChange={handleDateChange}/>
-          </LocalizationProvider>
-        </Stack>
-      }
+      breadcrumbs={[
+        { title: 'toko5s', path: '/toko5s' },
+        { title: 'Comments' }
+      ]}
+      // actions={
+      //   <Stack direction="row" alignItems="center" spacing={1}>
+      //     <Tooltip title="Reload data" placement="right" enterDelay={1000}>
+      //       <div>
+      //         <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
+      //           <RefreshIcon />
+      //         </IconButton>
+      //       </div>
+      //     </Tooltip>
+      //     {/* <Button
+      //       variant="contained"
+      //       onClick={handleCreateClick}
+      //       startIcon={<AddIcon />}
+      //     >
+      //       Date
+      //     </Button> */}
+      //     {/* <DemoItem label="Desktop variant">
+      //     </DemoItem> */}
+      //     <LocalizationProvider dateAdapter={AdapterDayjs}>
+      //       <DesktopDatePicker value={date} onChange={handleDateChange}/>
+      //     </LocalizationProvider>
+      //   </Stack>
+      // }
     >
       <Box sx={{ flex: 1, width: '100%' }}>
         {error ? (
@@ -397,7 +325,7 @@ export default function Toko5List() {
             rows={rowsState.rows}
             rowCount={rowsState.rowCount}
             columns={columns}
-            getRowId={(row) => row.toko5Id}
+            getRowId={(row) => row.commentaireId}
             pagination
             sortingMode="server"
             filterMode="server"
@@ -409,7 +337,6 @@ export default function Toko5List() {
             filterModel={filterModel}
             onFilterModelChange={handleFilterModelChange}
             disableRowSelectionOnClick
-            onRowClick={handleRowClick}
             loading={isLoading}
             initialState={initialState}
             showToolbar

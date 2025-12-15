@@ -13,6 +13,7 @@ export interface Question {
 
 export interface Commentaire {
     commentaireId: number;
+    toko5Id: string;
     nom: string;
     prenom: string;
     commentaire: string;
@@ -20,6 +21,7 @@ export interface Commentaire {
 
 export interface MesureControle {
     mesureControleId: number;
+    toko5Id: string;
     question: Question;
     mesurePrise: string;
     implemented: boolean;
@@ -36,91 +38,91 @@ export interface Toko5 {
     listMesureControle: MesureControle[];
 }
 
-const INITIAL_LIST_TOKO5: Toko5[] = [
-    {
-        toko5Id: "befe1e48-cde9-49ef-bae8-8ca64a7900f5 ",
-        nomContractant: 'Rakoto',
-        prenomContractant: 'Jean',
-        dateHeure: new Date('2025-12-11T00:00:00.000Z'),
-        etat: 'valide',
-        listCommentaire: [{
-            commentaireId: 0,
-            nom: 'Rakoto',
-            prenom: 'Jean',
-            commentaire: 'tapaka ny jiro'
-        }],
-        listMesureControle: [
-            {
-                mesureControleId: 0,
-                question: {
-                    questionId: 0,
-                    nom: 'alerte feu',
-                    pictrogramme: 'fire_warning',
-                    categorie: 'risk',
-                    required: false
-                },
-                mesurePrise: 'afindra ny matos',
-                implemented: true
-            },
-            {
-                mesureControleId: 0,
-                question: {
-                    questionId: 0,
-                    nom: 'alerte electricite',
-                    pictrogramme: 'electricity',
-                    categorie: 'risk',
-                    required: false
-                },
-                mesurePrise: 'afindra ny matos',
-                implemented: false
-            }
-        ],
-    },
-    {
-        toko5Id: "15a8d753-b64c-48d4-befc-e06533dcb619 ",
-        nomContractant: 'Rakoto',
-        prenomContractant: 'Jean',
-        dateHeure: new Date('2025-12-11T00:00:00.000Z'),
-        etat: 'valide',
-        listCommentaire: [{
-            commentaireId: 0,
-            nom: 'Rakoto',
-            prenom: 'Jean',
-            commentaire: 'tapaka ny jiro'
-        }],
-        listMesureControle: [
-            {
-                mesureControleId: 0,
-                question: {
-                    questionId: 1,
-                    nom: 'alerte feu',
-                    pictrogramme: 'fire_warning',
-                    categorie: 'risk',
-                    required: false
-                },
-                mesurePrise: 'afindra ny matos',
-                implemented: true
-            },
-            {
-                mesureControleId: 0,
-                question: {
-                    questionId: 2,
-                    nom: 'alerte electricite',
-                    pictrogramme: 'electricity',
-                    categorie: 'risk',
-                    required: false
-                },
-                mesurePrise: 'afindra ny matos',
-                implemented: false
-            }
-        ],
-    },
-];
+// const INITIAL_LIST_TOKO5: Toko5[] = [
+//     {
+//         toko5Id: "befe1e48-cde9-49ef-bae8-8ca64a7900f5 ",
+//         nomContractant: 'Rakoto',
+//         prenomContractant: 'Jean',
+//         dateHeure: new Date('2025-12-11T00:00:00.000Z'),
+//         etat: 'valide',
+//         listCommentaire: [{
+//             commentaireId: 0,
+//             nom: 'Rakoto',
+//             prenom: 'Jean',
+//             commentaire: 'tapaka ny jiro'
+//         }],
+//         listMesureControle: [
+//             {
+//                 mesureControleId: 0,
+//                 question: {
+//                     questionId: 0,
+//                     nom: 'alerte feu',
+//                     pictrogramme: 'fire_warning',
+//                     categorie: 'risk',
+//                     required: false
+//                 },
+//                 mesurePrise: 'afindra ny matos',
+//                 implemented: true
+//             },
+//             {
+//                 mesureControleId: 0,
+//                 question: {
+//                     questionId: 0,
+//                     nom: 'alerte electricite',
+//                     pictrogramme: 'electricity',
+//                     categorie: 'risk',
+//                     required: false
+//                 },
+//                 mesurePrise: 'afindra ny matos',
+//                 implemented: false
+//             }
+//         ],
+//     },
+//     {
+//         toko5Id: "15a8d753-b64c-48d4-befc-e06533dcb619 ",
+//         nomContractant: 'Rakoto',
+//         prenomContractant: 'Jean',
+//         dateHeure: new Date('2025-12-11T00:00:00.000Z'),
+//         etat: 'valide',
+//         listCommentaire: [{
+//             commentaireId: 0,
+//             nom: 'Rakoto',
+//             prenom: 'Jean',
+//             commentaire: 'tapaka ny jiro'
+//         }],
+//         listMesureControle: [
+//             {
+//                 mesureControleId: 0,
+//                 question: {
+//                     questionId: 1,
+//                     nom: 'alerte feu',
+//                     pictrogramme: 'fire_warning',
+//                     categorie: 'risk',
+//                     required: false
+//                 },
+//                 mesurePrise: 'afindra ny matos',
+//                 implemented: true
+//             },
+//             {
+//                 mesureControleId: 0,
+//                 question: {
+//                     questionId: 2,
+//                     nom: 'alerte electricite',
+//                     pictrogramme: 'electricity',
+//                     categorie: 'risk',
+//                     required: false
+//                 },
+//                 mesurePrise: 'afindra ny matos',
+//                 implemented: false
+//             }
+//         ],
+//     },
+// ];
 
-export function getListToko5(): Toko5[] {
-    const stringifiedToko5s = localStorage.getItem('toko5-store');
-    return stringifiedToko5s ? JSON.parse(stringifiedToko5s) : INITIAL_LIST_TOKO5;
-}
+// export function getListToko5(): Toko5[] {
+//     const stringifiedToko5s = localStorage.getItem('toko5-store');
+//     return stringifiedToko5s ? JSON.parse(stringifiedToko5s) : INITIAL_LIST_TOKO5;
+// }
 
 export function setListToko5(toko5s: Toko5[]) {
     return localStorage.setItem('list-toko5', JSON.stringify(toko5s));
@@ -201,58 +203,58 @@ export async function getMany({
 
 
 
-export async function getOne(toko5Id: string) {
-    const listToko5 = getListToko5();
+// export async function getOne(toko5Id: string) {
+//     const listToko5 = getListToko5();
 
-    const toko5ToShow = listToko5.find((toko5) => toko5.toko5Id === toko5Id);
+//     const toko5ToShow = listToko5.find((toko5) => toko5.toko5Id === toko5Id);
 
-    if (!toko5ToShow) {
-        throw new Error('toko5 not found');
-    }
-    return toko5ToShow;
-}
+//     if (!toko5ToShow) {
+//         throw new Error('toko5 not found');
+//     }
+//     return toko5ToShow;
+// }
 
-export async function createOne(data: Omit<Toko5, 'toko5Id'>) {
-    const listToko5 = getListToko5();
+// export async function createOne(data: Omit<Toko5, 'toko5Id'>) {
+//     const listToko5 = getListToko5();
 
-    const newToko5 = {
-        toko5Id: 'uuid', 
-        ...data,
-    };
+//     const newToko5 = {
+//         toko5Id: 'uuid', 
+//         ...data,
+//     };
 
-    setListToko5([...listToko5, newToko5]);
+//     setListToko5([...listToko5, newToko5]);
 
-    return newToko5;
-}
+//     return newToko5;
+// }
 
 
 
-export async function updateOne(toko5Id: string, data: Partial<Omit<Toko5, 'id'>>) {
-    const listToko5 = getListToko5();
+// export async function updateOne(toko5Id: string, data: Partial<Omit<Toko5, 'id'>>) {
+//     const listToko5 = getListToko5();
 
-    let updatedToko5: Toko5 | null = null;
+//     let updatedToko5: Toko5 | null = null;
 
-    setListToko5(
-        listToko5.map((toko5) => {
-            if (toko5.toko5Id === toko5Id) {
-                updatedToko5 = { ...toko5, ...data };
-                return updatedToko5;
-            }
-            return toko5;
-        }),
-    );
+//     setListToko5(
+//         listToko5.map((toko5) => {
+//             if (toko5.toko5Id === toko5Id) {
+//                 updatedToko5 = { ...toko5, ...data };
+//                 return updatedToko5;
+//             }
+//             return toko5;
+//         }),
+//     );
 
-    if (!updatedToko5) {
-        throw new Error('Toko5 not found');
-    }
-    return updatedToko5;
-}
+//     if (!updatedToko5) {
+//         throw new Error('Toko5 not found');
+//     }
+//     return updatedToko5;
+// }
 
-export async function deleteOne(toko5Id: string) {
-    const listToko5 = getListToko5();
+// export async function deleteOne(toko5Id: string) {
+//     const listToko5 = getListToko5();
 
-    setListToko5(listToko5.filter((toko5) => toko5.toko5Id !== toko5Id));
-}
+//     setListToko5(listToko5.filter((toko5) => toko5.toko5Id !== toko5Id));
+// }
 
 // Validation follows the [Standard Schema](https://standardschema.dev/).
 
@@ -285,4 +287,151 @@ export function validate(toko5: Partial<Toko5>): ValidationResult {
     // }
 
     return { issues };
+}
+
+
+
+export async function getManyComments({
+    paginationModel,
+    filterModel,
+    sortModel,
+    listCommentaire
+    // axiosInstance
+}: {
+    paginationModel: GridPaginationModel;
+    sortModel: GridSortModel;
+    filterModel: GridFilterModel;
+    listCommentaire: Commentaire[];
+    //axiosInstance: AxiosInstance
+}): Promise<{ items: Commentaire[]; itemCount: number }> {
+
+    let filteredCommentaires = [...listCommentaire];
+
+    // Apply filters (example only)
+    if (filterModel?.items?.length) {
+        filterModel.items.forEach(({ field, value, operator }) => {
+            if (!field || value == null) {
+                return;
+            }
+
+            filteredCommentaires = filteredCommentaires.filter((commentaire) => {
+                const commentaireValue = commentaire[field as keyof Commentaire];
+
+                switch (operator) {
+                    case 'contains':
+                        return String(commentaireValue).toLowerCase().includes(String(value).toLowerCase());
+                    case 'equals':
+                        return commentaireValue === value;
+                    case 'startsWith':
+                        return String(commentaireValue).toLowerCase().startsWith(String(value).toLowerCase());
+                    case 'endsWith':
+                        return String(commentaireValue).toLowerCase().endsWith(String(value).toLowerCase());
+                    case '>':
+                        return commentaireValue > value;
+                    case '<':
+                        return commentaireValue < value;
+                    default:
+                        return true;
+                }
+            });
+        });
+    }
+
+    // Apply sorting
+    if (sortModel?.length) {
+        filteredCommentaires.sort((a, b) => {
+            for (const { field, sort } of sortModel) {
+                if (a[field as keyof Commentaire] < b[field as keyof Commentaire]) {
+                    return sort === 'asc' ? -1 : 1;
+                }
+                if (a[field as keyof Commentaire] > b[field as keyof Commentaire]) {
+                    return sort === 'asc' ? 1 : -1;
+                }
+            }
+            return 0;
+        });
+    }
+
+    // Apply pagination
+    const start = paginationModel.page * paginationModel.pageSize;
+    const end = start + paginationModel.pageSize;
+    const paginatedCommentaires = filteredCommentaires.slice(start, end);
+
+    return {
+        items: paginatedCommentaires,
+        itemCount: filteredCommentaires.length,
+    };
+}
+
+
+export async function getManyMesureControle({
+    paginationModel,
+    filterModel,
+    sortModel,
+    listMesureControle
+    // axiosInstance
+}: {
+    paginationModel: GridPaginationModel;
+    sortModel: GridSortModel;
+    filterModel: GridFilterModel;
+    listMesureControle: MesureControle[];
+    //axiosInstance: AxiosInstance
+}): Promise<{ items: MesureControle[]; itemCount: number }> {
+
+    let filteredMesureControles = [...listMesureControle];
+
+    // Apply filters (example only)
+    if (filterModel?.items?.length) {
+        filterModel.items.forEach(({ field, value, operator }) => {
+            if (!field || value == null) {
+                return;
+            }
+
+            filteredMesureControles = filteredMesureControles.filter((mesureControle) => {
+                const mesureControleValue = mesureControle[field as keyof MesureControle];
+
+                switch (operator) {
+                    case 'contains':
+                        return String(mesureControleValue).toLowerCase().includes(String(value).toLowerCase());
+                    case 'equals':
+                        return mesureControleValue === value;
+                    case 'startsWith':
+                        return String(mesureControleValue).toLowerCase().startsWith(String(value).toLowerCase());
+                    case 'endsWith':
+                        return String(mesureControleValue).toLowerCase().endsWith(String(value).toLowerCase());
+                    case '>':
+                        return mesureControleValue > value;
+                    case '<':
+                        return mesureControleValue < value;
+                    default:
+                        return true;
+                }
+            });
+        });
+    }
+
+    // Apply sorting
+    if (sortModel?.length) {
+        filteredMesureControles.sort((a, b) => {
+            for (const { field, sort } of sortModel) {
+                if (a[field as keyof MesureControle] < b[field as keyof MesureControle]) {
+                    return sort === 'asc' ? -1 : 1;
+                }
+                if (a[field as keyof MesureControle] > b[field as keyof MesureControle]) {
+                    return sort === 'asc' ? 1 : -1;
+                }
+            }
+            return 0;
+        });
+    }
+
+    // Apply pagination
+    const start = paginationModel.page * paginationModel.pageSize;
+    const end = start + paginationModel.pageSize;
+    const paginatedMesureControles = filteredMesureControles.slice(start, end);
+
+    return {
+        items: paginatedMesureControles,
+        itemCount: filteredMesureControles.length,
+    };
 }
