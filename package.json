@@ -23,11 +23,13 @@
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.13.2",
     "dayjs": "latest",
+    "firebase": "^12.6.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-qr-code": "^2.0.18",
     "react-router": "^7.9.6",
     "react-router-dom": "^7.10.1",
+    "react-toastify": "^11.0.5",
     "typescript": "latest"
   },
   "devDependencies": {

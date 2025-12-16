@@ -25,6 +25,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { flushSync } from 'react-dom';
 //import { useAuth } from '../context/AuthContext';
+import { getToken } from 'firebase/messaging';
+import { messaging } from '../firebase/firebaseConfig';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -97,7 +99,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if(!validateInputs()){
+    if (!validateInputs()) {
       throw new Error("Invalid inputs");
     }
 
@@ -118,8 +120,9 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
       const response = await axios.post(BACKEND_SERVER_URL + "/signin", {
         username: data.get('username'),
         password: data.get('password')
-      },{withCredentials: true});
+      }, { withCredentials: true });
       sessionStorage.setItem('access_token', response.data.access_token);
+      requestPermission();
       //login(data.get('username') as string, data.get('password') as string);    
       navigate('/toko5s/')
     } catch (error) {
@@ -157,6 +160,25 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
     return isValid;
   };
 
+  const { VITE_APP_VAPID_KEY } = import.meta.env;
+
+  async function requestPermission() {
+    //requesting permission using Notification API
+    const permission = await Notification.requestPermission();
+
+    if (permission === "granted") {
+      const token = await getToken(messaging, {
+        vapidKey: VITE_APP_VAPID_KEY,
+      });
+
+      //We can send token to server
+      console.log("Token generated : ", token);
+    } else if (permission === "denied") {
+      //notifications are blocked
+      alert("You denied for the notification");
+    }
+  }
+
   return (
     <AppTheme {...props}>
       <CssBaseline enableColorScheme />
@@ -165,7 +187,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
         <Card variant="outlined">
           {/* <SitemarkIcon /> */}
           <Box display="flex" justifyContent="center">
-            <StxIcon/>  
+            <StxIcon />
           </Box>
           <Typography
             display="flex"
@@ -175,7 +197,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
             component="h1"
             variant="h4"
             sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-            // align="center"
+          // align="center"
           >
             Identification
           </Typography>
@@ -205,7 +227,7 @@ export default function SignIn(props: { disableCustomTheme?: boolean }) {
                 fullWidth
                 variant="outlined"
                 color={'primary'}
-                //color={emailError ? 'error' : 'primary'}
+              //color={emailError ? 'error' : 'primary'}
               />
             </FormControl>
             <FormControl>

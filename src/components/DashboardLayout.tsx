@@ -7,6 +7,10 @@ import { Outlet } from 'react-router';
 import DashboardHeader from './DashboardHeader';
 import DashboardSidebar from './DashboardSidebar';
 import StxIcon from './StxIcon';
+import { onMessage } from 'firebase/messaging';
+import Message from './Message';
+import { toast, ToastContainer } from "react-toastify";
+import { messaging } from '../firebase/firebaseConfig';
 
 
 export default function DashboardLayout() {
@@ -52,6 +56,18 @@ export default function DashboardLayout() {
     }
   }, []);
 
+  // useEffect(() => {
+  //   requestPermission();
+  //   toast(<Message notification={{title: 'test',body: 'test'}} />);
+  // }, []);
+
+  onMessage(messaging, (payload) => {
+    if (payload.notification) {
+      toast(<Message notification={payload.notification} />);
+    }
+  });
+
+
   return (
     <Box
       ref={layoutRef}
@@ -95,6 +111,7 @@ export default function DashboardLayout() {
           <Outlet />
         </Box>
       </Box>
+      <ToastContainer />
     </Box>
   );
 }
