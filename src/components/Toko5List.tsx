@@ -48,8 +48,12 @@ import { useState } from 'react';
 import { Modal, Typography } from '@mui/material';
 //import { flushSync } from 'react-dom';
 //import { useAuth } from '../context/AuthContext';
+import SockJs from "sockjs-client";
+import { Client } from '@stomp/stompjs';
 
 const INITIAL_PAGE_SIZE = 10;
+
+const { VITE_BACKEND_SERVER } = import.meta.env;
 
 const modalStyle = {
   position: 'absolute',
@@ -101,7 +105,7 @@ export default function Toko5List() {
   const [currentQr, setCurrentQr] = useState<string>('');
   const [qrModalOpen, setQrModalOpen] = useState(false);
 
-   const handleQrModalOpen = React.useCallback((uuid: string) => {
+  const handleQrModalOpen = React.useCallback((uuid: string) => {
     setCurrentQr(uuid);
     setQrModalOpen(true);
   }, []);
@@ -243,8 +247,49 @@ export default function Toko5List() {
     setIsLoading(false);
   }, [paginationModel, sortModel, filterModel, axiosInstance, date]);
 
+
+  const stompClientRef = React.useRef<Client>(null);
+
   React.useEffect(() => {
     loadData();
+
+
+    const socket = new SockJs(`${VITE_BACKEND_SERVER}/ws`);
+    const stompClient = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      debug: (str) => {
+        console.log(str);
+      },
+      onConnect: () => {
+        console.log('Connected to WebSocket');
+        stompClient.subscribe('/topic/', (response) => {
+          console.log('Received message:', response.body);
+          //setMessage(JSON.parse(response.body).content);
+        });
+        stompClient.subscribe('/topic/toko5s/new', (message) => {
+          const newToko5 = JSON.parse(message.body) as Toko5;
+          console.log(newToko5);
+
+          setRowsState(prev => ({
+            rows: [newToko5, ...prev.rows],
+            rowCount: prev.rowCount + 1,
+          }));
+        });
+      },
+      onStompError: (frame) => {
+        console.error('Broker reported error: ' + frame.headers['message']);
+        console.error('Additional details: ' + frame.body);
+      },
+    });
+
+    stompClient.activate();
+    stompClientRef.current = stompClient;
+
+    return () => {
+      stompClient.deactivate();
+    };
+
   }, [loadData]);
 
   const handleRefresh = React.useCallback(() => {
@@ -398,7 +443,7 @@ export default function Toko5List() {
         field: 'toko5Id',
         headerName: 'QR',
         renderCell: (params: GridCellParams) => {
-          return <IconButton aria-label="invalide" color="primary" onClick={() => {handleQrModalOpen(String(params.value))}}>
+          return <IconButton aria-label="invalide" color="primary" onClick={() => { handleQrModalOpen(String(params.value)) }}>
             <QrCodeIcon />
           </IconButton>;
         }
@@ -536,7 +581,7 @@ export default function Toko5List() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={qrModalStyle}>
-          <QRCode value={currentQr}/>
+          <QRCode value={currentQr} />
         </Box>
       </Modal>
     </PageContainer>

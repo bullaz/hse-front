@@ -9,7 +9,7 @@ import DashboardSidebar from './DashboardSidebar';
 import StxIcon from './StxIcon';
 import { onMessage } from 'firebase/messaging';
 import Message from './Message';
-import { toast, ToastContainer } from "react-toastify";
+import { Slide, toast, ToastContainer } from "react-toastify";
 import { messaging } from '../firebase/firebaseConfig';
 
 
@@ -64,6 +64,17 @@ export default function DashboardLayout() {
   onMessage(messaging, (payload) => {
     if (payload.notification) {
       toast(<Message notification={payload.notification} />);
+      // toast.warn('🦄 Wow so easy!', {
+      //   position: "bottom-right",
+      //   autoClose: 5000,
+      //   hideProgressBar: false,
+      //   closeOnClick: false,
+      //   pauseOnHover: true,
+      //   draggable: true,
+      //   progress: undefined,
+      //   theme: "colored",
+      //   transition: Slide,
+      // });
     }
   });
 
@@ -111,7 +122,19 @@ export default function DashboardLayout() {
           <Outlet />
         </Box>
       </Box>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Slide}
+      />
     </Box>
   );
 }
