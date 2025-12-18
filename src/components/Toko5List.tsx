@@ -50,6 +50,7 @@ import { Modal, Typography } from '@mui/material';
 //import { useAuth } from '../context/AuthContext';
 import SockJs from "sockjs-client";
 import { Client } from '@stomp/stompjs';
+import { Slide, toast } from 'react-toastify';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -269,12 +270,41 @@ export default function Toko5List() {
         });
         stompClient.subscribe('/topic/toko5s/new', (message) => {
           const newToko5 = JSON.parse(message.body) as Toko5;
-          console.log(newToko5);
+          //console.log(newToko5);
 
           setRowsState(prev => ({
             rows: [newToko5, ...prev.rows],
             rowCount: prev.rowCount + 1,
           }));
+        });
+
+
+        stompClient.subscribe('/topic/toko5s/invalid', (message) => {
+          const toko5 = JSON.parse(message.body) as Toko5;
+          //console.log(newToko5);
+
+          setRowsState(prev => {
+            const updatedRows = prev.rows.map(row =>
+              row.toko5Id === toko5.toko5Id ? toko5 : row
+            );
+
+            return {
+              rows: updatedRows,
+              rowCount: prev.rowCount,
+            };
+          });
+
+          toast.warn(`TOKO 5 DE ${toko5.nomContractant} ${toko5.prenomContractant} invalide!`, {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            transition: Slide,
+          });
         });
       },
       onStompError: (frame) => {
@@ -396,7 +426,7 @@ export default function Toko5List() {
             return <Link href={`/#/toko5s/toko5/${id}/mesures`} onClick={onClick} variant="body2" color={"#4876ee"}>{params.value.length} mesure(s) prise(s)</Link>
           }
           // return <Button variant="contained" color="primary" onClick={onClick}>{params.value.length}</Button>;
-          return <Link href="#" onClick={onClick} variant="body2" color="inherit">0 mesure(s) prise(s)</Link>
+          return <Link href="/#/toko5s" variant="body2" color="inherit" underline='none'>0 mesure prise</Link>
         },
       },
       {

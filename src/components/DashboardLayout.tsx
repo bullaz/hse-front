@@ -125,14 +125,14 @@ export default function DashboardLayout() {
       <ToastContainer
         position="bottom-right"
         autoClose={5000}
-        hideProgressBar={false}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
         rtl={false}
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
+        theme="light"
         transition={Slide}
       />
     </Box>
