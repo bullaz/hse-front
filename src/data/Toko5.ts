@@ -12,7 +12,7 @@ export interface Question {
 }
 
 export interface Commentaire {
-    commentaireId: number;
+    commentaireId: string;
     toko5Id: string;
     nom: string;
     prenom: string;
@@ -20,7 +20,7 @@ export interface Commentaire {
 }
 
 export interface MesureControle {
-    mesureControleId: number;
+    mesureControleId: string;
     toko5Id: string;
     question: Question;
     mesurePrise: string;

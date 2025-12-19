@@ -306,7 +306,28 @@ export default function Toko5List() {
             transition: Slide,
           });
         });
+
+
+
+        stompClient.subscribe('/topic/toko5s/update', (message) => {
+          const toko5 = JSON.parse(message.body) as Toko5;
+          console.log(toko5);
+
+          setRowsState(prev => {
+            const updatedRows = prev.rows.map(row =>
+              row.toko5Id === toko5.toko5Id ? toko5 : row
+            );
+
+            return {
+              rows: updatedRows,
+              rowCount: prev.rowCount,
+            };
+          });
+        });
+
       },
+
+
       onStompError: (frame) => {
         console.error('Broker reported error: ' + frame.headers['message']);
         console.error('Additional details: ' + frame.body);
