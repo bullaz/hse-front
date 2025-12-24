@@ -7,9 +7,10 @@ import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import type {} from '@mui/material/themeCssVarsAugmentation';
 import SafetyCheckIcon from '@mui/icons-material/SafetyCheck';
-import BarChartIcon from '@mui/icons-material/BarChart';
+// import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
-import LayersIcon from '@mui/icons-material/Layers';
+// import LayersIcon from '@mui/icons-material/Layers';
+import TocIcon from '@mui/icons-material/Toc';
 import { matchPath, useLocation } from 'react-router';
 import DashboardSidebarContext from '../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
@@ -143,13 +144,13 @@ export default function DashboardSidebar({
             <DashboardSidebarDividerItem />
             <DashboardSidebarHeaderItem>Autre taches</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
-              id="autre1"
-              title="autre1"
-              icon={<BarChartIcon />}
-              href="/reports"
-              selected={!!matchPath('/reports', pathname)}
-              defaultExpanded={!!matchPath('/reports', pathname)}
-              expanded={expandedItemIds.includes('reports')}
+              id="CRUD"
+              title="CRUD"
+              icon={<TocIcon />}
+              href="/crud"
+              selected={!!matchPath('/crud', pathname)}
+              defaultExpanded={!!matchPath('/crud', pathname)}
+              expanded={expandedItemIds.includes('crud')}
               nestedNavigation={
                 <List
                   dense
@@ -177,13 +178,13 @@ export default function DashboardSidebar({
                 </List>
               }
             />
-            <DashboardSidebarPageItem
+            {/* <DashboardSidebarPageItem
               id="autre2"
               title="autre2"
               icon={<LayersIcon />}
               href="/integrations"
               selected={!!matchPath('/integrations', pathname)}
-            />
+            /> */}
           </List>
         </Box>
       </React.Fragment>
