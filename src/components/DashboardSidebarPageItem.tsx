@@ -108,6 +108,7 @@ export default function DashboardSidebarPageItem({
         {...(nestedNavigation && mini
           ? {
               onMouseEnter: () => {
+                console.log('isHovered')
                 setIsHovered(true);
               },
               onMouseLeave: () => {

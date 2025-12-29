@@ -20,6 +20,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 import CommentaireList from './components/CommentaireList';
 import MesureControleList from './components/MesureControleList';
+import ListSociete from './components/societeCrud/ListSociete';
 
 
 const router = createHashRouter([
@@ -34,6 +35,10 @@ const router = createHashRouter([
       {
         path: '/toko5s',
         element: <ProtectedRoute><Toko5List /></ProtectedRoute>,
+      },
+      {
+        path: '/societes',
+        element: <ProtectedRoute><ListSociete /></ProtectedRoute>,
       },
       {
         path: '/toko5s/toko5/:toko5Id/comments',

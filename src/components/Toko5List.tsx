@@ -51,6 +51,7 @@ import { Modal, Typography } from '@mui/material';
 import SockJs from "sockjs-client";
 import { Client } from '@stomp/stompjs';
 import { Slide, toast } from 'react-toastify';
+import { frFR } from '@mui/x-data-grid/locales';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -563,6 +564,7 @@ export default function Toko5List() {
           </Box>
         ) : (
           <DataGrid
+            localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
             rows={rowsState.rows}
             rowCount={rowsState.rowCount}
             columns={columns}

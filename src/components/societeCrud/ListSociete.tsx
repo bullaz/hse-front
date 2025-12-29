@@ -1,10 +1,6 @@
 import * as React from 'react';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
-//import Button from '@mui/material/Button';
-// import IconButton from '@mui/material/IconButton';
-// import Stack from '@mui/material/Stack';
-// import Tooltip from '@mui/material/Tooltip';
 import {
   DataGrid,
   GridActionsCellItem,
@@ -14,67 +10,36 @@ import type {
   GridColDef,
   GridFilterModel,
   GridPaginationModel,
-  GridSortModel,
+  GridSortModel
 } from '@mui/x-data-grid';
-//import AddIcon from '@mui/icons-material/Add';
-// import RefreshIcon from '@mui/icons-material/Refresh';
-//import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
-import { useDialogs } from '../hooks/useDialogs/useDialogs';
-import useNotifications from '../hooks/useNotifications/useNotifications';
-import {
-  getManyComments as getComs,
-  type Commentaire
-} from '../data/Toko5';
-import PageContainer from './PageContainer';
-// import Link from '@mui/material/Link';
-// import { DesktopDatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-// import dayjs, { Dayjs } from 'dayjs';
-// import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useAuth } from '../context/AuthContext';
-import { useState } from 'react';
-//import { flushSync } from 'react-dom';
-//import { useAuth } from '../context/AuthContext';
 import { frFR } from '@mui/x-data-grid/locales';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import { useDialogs } from '../../hooks/useDialogs/useDialogs';
+import useNotifications from '../../hooks/useNotifications/useNotifications';
+import {
+  getManySociete as getSocietes,
+  type Societe
+} from '../../data/societe';
+import PageContainer from '../PageContainer';
+import { useAuth } from '../../context/AuthContext';
+import { useState } from 'react';
+import { Button, Stack } from '@mui/material';
 
 const INITIAL_PAGE_SIZE = 10;
 
-interface ComsParams {
-  [key: string]: string | undefined;
-  toko5Id: string;
-}
+// interface ListSocieteParams {
+//   [key: string]: string | undefined;
+// }
 
 export default function CommentaireList() {
-
-  //const {axiosInstance} = useAuth();
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {axiosInstance} = useAuth();
-  const { toko5Id } = useParams<ComsParams>();
-  //const [listToko5, setListToko5] = useState<Toko5[]>([]);
-
-  // const handleDateChange = (newValue) => {
-  //   setSelectedDate(newValue);
-    
-  //   // 3. Access and format the date value for use (e.g., send to an API).
-  //   if (newValue) {
-  //     // Format the dayjs object into a standard ISO string (YYYY-MM-DD)
-  //     const dateISOString = newValue.toISOString(); 
-  //     // Or format it into a specific string format for display
-  //     const formattedDate = newValue.format('MM-DD-YYYY'); 
-
-  //     console.log('Raw date object:', newValue);
-  //     console.log('ISO String:', dateISOString);
-  //     console.log('Formatted Date:', formattedDate);
-  //   } else {
-  //     console.log('Date cleared, value is null');
-  //   }
-  // };
-
+  const { axiosInstance } = useAuth();
   const dialogs = useDialogs();
   const notifications = useNotifications();
 
@@ -96,7 +61,7 @@ export default function CommentaireList() {
   );
 
   const [rowsState, setRowsState] = useState<{
-    rows: Commentaire[];
+    rows: Societe[];
     rowCount: number;
   }>({
     rows: [],
@@ -167,19 +132,15 @@ export default function CommentaireList() {
     setError(null);
     setIsLoading(true);
 
-    //console.log('date', date.toISOString().split('T')[0]);
-
-    const commentsReponse = await axiosInstance.get(`/toko5s/toko5/${toko5Id}/comments`,{params: {}});
-    const list = commentsReponse.data as Commentaire[];
-    //console.log("list toko5 from api", list);
-    //setListToko5(list);
+    const societesReponse = await axiosInstance.get(`/societes`, { params: {} });
+    const list = societesReponse.data._embedded.societes as Societe[];
 
     try {
-      const listData = await getComs({
+      const listData = await getSocietes({
         paginationModel,
         sortModel,
         filterModel,
-        listCommentaire: list,
+        listSociete: list,
       });
 
       setRowsState({
@@ -191,54 +152,56 @@ export default function CommentaireList() {
     }
 
     setIsLoading(false);
-  }, [paginationModel, sortModel, filterModel, axiosInstance, toko5Id]);
+  }, [paginationModel, sortModel, filterModel, axiosInstance]);
 
   React.useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // const handleRefresh = React.useCallback(() => {
-  //   if (!isLoading) {
-  //     loadData();
-  //   }
-  // }, [isLoading, loadData]);
+  const handleCreateClick = React.useCallback(() => {
+    navigate('/societes/new');
+  }, [navigate]);
 
-  // const handleCreateClick = React.useCallback(() => {
-  //   navigate('/employees/new');
-  // }, [navigate]);
-
-  // const handleRowEdit = React.useCallback(
-  //   (toko5: Commentaire) => () => {
-  //     navigate(`/toko5s/${toko5.toko5Id}/edit`);
-  //   },
-  //   [navigate],
-  // );
+  const handleRowEdit = React.useCallback(
+    (societe: Societe) => () => {
+      navigate(`/societes/${societe.societeId}/edit`);
+    },
+    [navigate],
+  );
 
   const handleRowDelete = React.useCallback(
-    (toko5: Commentaire) => async () => {
+    (toDelete: Societe) => async () => {
       const confirmed = await dialogs.confirm(
-        `Do you wish to delete ${toko5.nom}?`,
+        `Voulez-vous vraiment supprimer la société ${toDelete.nom}?`,
         {
-          title: `Delete employee?`,
+          title: `Supprimer la société?`,
           severity: 'error',
-          okText: 'Delete',
-          cancelText: 'Cancel',
+          okText: 'Supprimer',
+          cancelText: 'Annuler',
         },
       );
 
       if (confirmed) {
         setIsLoading(true);
         try {
-          //await deleteToko5((toko5.toko5Id));
+          await axiosInstance.delete(`/societes/${toDelete.societeId}`, { params: {} });
 
-          notifications.show('toko5 deleted successfully.', {
+          setRowsState(prev => {
+            const updatedRows = prev.rows.filter((societe) => societe.societeId !== toDelete.societeId);
+            return {
+              rows: updatedRows,
+              rowCount: prev.rowCount,
+            };
+          });
+
+          notifications.show('suppression réussie.', {
             severity: 'success',
             autoHideDuration: 3000,
           });
-          loadData();
+          // loadData();
         } catch (deleteError) {
           notifications.show(
-            `Failed to delete toko5. Reason:' ${(deleteError as Error).message}`,
+            `échec de la suppression. Raison:' ${(deleteError as Error).message}`,
             {
               severity: 'error',
               autoHideDuration: 3000,
@@ -248,7 +211,7 @@ export default function CommentaireList() {
         setIsLoading(false);
       }
     },
-    [dialogs, notifications, loadData],
+    [dialogs, notifications, axiosInstance],
   );
 
   const initialState = React.useMemo(
@@ -261,9 +224,7 @@ export default function CommentaireList() {
   const columns = React.useMemo<GridColDef[]>(
     () => [
       // { field: 'toko5Id', headerName: 'ID' },
-      { field: 'nom', headerName: 'Nom du Commentateur', width: 200 },
-      { field: 'prenom', headerName: 'Prenom du Commentateur', width: 230 },
-      { field: 'commentaire', headerName: 'Commentaire', width: 600 },
+      { field: 'nom', headerName: 'Nom de la société', width: 200 },
       {
         field: 'actions',
         type: 'actions',
@@ -276,13 +237,19 @@ export default function CommentaireList() {
             label="Delete"
             onClick={handleRowDelete(row)}
           />,
+          <GridActionsCellItem
+            key="edit-item"
+            icon={<EditIcon />}
+            label="Edit"
+            onClick={handleRowEdit(row)}
+          />
         ],
       },
     ],
-    [handleRowDelete],
+    [handleRowDelete, handleRowEdit],
   );
 
-  const pageTitle1 = 'COMMENTAIRES DU TOKO5 DE ?';
+  const pageTitle1 = 'Liste des sociétés';
   //const pageTitle2 = '';
 
 
@@ -290,32 +257,19 @@ export default function CommentaireList() {
     <PageContainer
       title={pageTitle1}
       breadcrumbs={[
-        { title: 'liste des toko 5', path: '/toko5s' },
-        { title: 'Comments' }
+        { title: 'Liste des sociétés' }
       ]}
-      // actions={
-      //   <Stack direction="row" alignItems="center" spacing={1}>
-      //     <Tooltip title="Reload data" placement="right" enterDelay={1000}>
-      //       <div>
-      //         <IconButton size="small" aria-label="refresh" onClick={handleRefresh}>
-      //           <RefreshIcon />
-      //         </IconButton>
-      //       </div>
-      //     </Tooltip>
-      //     {/* <Button
-      //       variant="contained"
-      //       onClick={handleCreateClick}
-      //       startIcon={<AddIcon />}
-      //     >
-      //       Date
-      //     </Button> */}
-      //     {/* <DemoItem label="Desktop variant">
-      //     </DemoItem> */}
-      //     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      //       <DesktopDatePicker value={date} onChange={handleDateChange}/>
-      //     </LocalizationProvider>
-      //   </Stack>
-      // }
+      actions={
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <Button
+            variant="contained"
+            onClick={handleCreateClick}
+            startIcon={<AddIcon />}
+          >
+            Créer
+          </Button>
+        </Stack>
+      }
     >
       <Box sx={{ flex: 1, width: '100%' }}>
         {error ? (
@@ -328,7 +282,7 @@ export default function CommentaireList() {
             rows={rowsState.rows}
             rowCount={rowsState.rowCount}
             columns={columns}
-            getRowId={(row) => row.commentaireId}
+            getRowId={(row) => row.societeId}
             pagination
             sortingMode="server"
             filterMode="server"

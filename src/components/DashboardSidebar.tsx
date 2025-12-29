@@ -5,10 +5,11 @@ import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
-import type {} from '@mui/material/themeCssVarsAugmentation';
+import type { } from '@mui/material/themeCssVarsAugmentation';
 import SafetyCheckIcon from '@mui/icons-material/SafetyCheck';
 // import BarChartIcon from '@mui/icons-material/BarChart';
 import DescriptionIcon from '@mui/icons-material/Description';
+import BusinessIcon from '@mui/icons-material/Business';
 // import LayersIcon from '@mui/icons-material/Layers';
 import TocIcon from '@mui/icons-material/Toc';
 import { matchPath, useLocation } from 'react-router';
@@ -58,7 +59,7 @@ export default function DashboardSidebar({
 
     setIsFullyExpanded(false);
 
-    return () => {};
+    return () => { };
   }, [expanded, theme.transitions.duration.enteringScreen]);
 
   React.useEffect(() => {
@@ -72,7 +73,7 @@ export default function DashboardSidebar({
 
     setIsFullyCollapsed(false);
 
-    return () => {};
+    return () => { };
   }, [expanded, theme.transitions.duration.leavingScreen]);
 
   const mini = !disableCollapsibleSidebar && !expanded;
@@ -86,12 +87,14 @@ export default function DashboardSidebar({
 
   const handlePageItemClick = React.useCallback(
     (itemId: string, hasNestedNavigation: boolean) => {
+      // console.log("handlepageitemclick");
       if (hasNestedNavigation && !mini) {
+        // console.log("hasNestedNavigation");
         setExpandedItemIds((previousValue) =>
           previousValue.includes(itemId)
             ? previousValue.filter(
-                (previousValueItemId) => previousValueItemId !== itemId,
-              )
+              (previousValueItemId) => previousValueItemId !== itemId,
+            )
             : [...previousValue, itemId],
         );
       } else if (!isOverSmViewport && !hasNestedNavigation) {
@@ -133,7 +136,8 @@ export default function DashboardSidebar({
               width: mini ? MINI_DRAWER_WIDTH : 'auto',
             }}
           >
-            <DashboardSidebarHeaderItem>Taches principals</DashboardSidebarHeaderItem>
+            {/* <DashboardSidebarHeaderItem>Taches principals</DashboardSidebarHeaderItem> */}
+            <DashboardSidebarHeaderItem>TOKO 5</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="toko5s"
               title="TOKO 5"
@@ -141,7 +145,20 @@ export default function DashboardSidebar({
               href="/toko5s"
               selected={!!matchPath('/toko5s/*', pathname) || pathname === '/'}
             />
+
+            <DashboardSidebarPageItem
+              id="societes"
+              title="SOCIÉTÉS"
+              icon={<BusinessIcon />}
+              href="/societes"
+              selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
+            />
+
+
             <DashboardSidebarDividerItem />
+
+
+
             <DashboardSidebarHeaderItem>Autre taches</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="CRUD"
@@ -165,15 +182,15 @@ export default function DashboardSidebar({
                     id="sales"
                     title="Sales"
                     icon={<DescriptionIcon />}
-                    href="/reports/sales"
-                    selected={!!matchPath('/reports/sales', pathname)}
+                    href="/crud/sales"
+                    selected={!!matchPath('/crud/sales', pathname)}
                   />
                   <DashboardSidebarPageItem
                     id="traffic"
                     title="Traffic"
                     icon={<DescriptionIcon />}
-                    href="/reports/traffic"
-                    selected={!!matchPath('/reports/traffic', pathname)}
+                    href="/crud/traffic"
+                    selected={!!matchPath('/crud/traffic', pathname)}
                   />
                 </List>
               }

@@ -38,6 +38,8 @@ import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 //import { flushSync } from 'react-dom';
 //import { useAuth } from '../context/AuthContext';
+import { frFR } from '@mui/x-data-grid/locales';
+
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -332,6 +334,7 @@ export default function MesureControleList() {
           </Box>
         ) : (
           <DataGrid
+            localeText={frFR.components.MuiDataGrid.defaultProps.localeText}
             rows={rowsState.rows}
             rowCount={rowsState.rowCount}
             columns={columns}
