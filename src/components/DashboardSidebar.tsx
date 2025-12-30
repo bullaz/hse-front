@@ -18,6 +18,8 @@ import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
 import DashboardSidebarPageItem from './DashboardSidebarPageItem';
 import DashboardSidebarHeaderItem from './DashboardSidebarHeaderItem';
 import DashboardSidebarDividerItem from './DashboardSidebarDividerItem';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import EngineeringIcon from '@mui/icons-material/Engineering';
 import {
   getDrawerSxTransitionMixin,
   getDrawerWidthTransitionMixin,
@@ -152,6 +154,22 @@ export default function DashboardSidebar({
               icon={<BusinessIcon />}
               href="/societes"
               selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
+            />
+
+            <DashboardSidebarPageItem
+              id="tasks"
+              title="TÂCHES"
+              icon={<EngineeringIcon />}
+              href="/tasks"
+              selected={!!matchPath('/tasks/*', pathname) || pathname === '/'}
+            />
+
+            <DashboardSidebarPageItem
+              id="stats"
+              title="STATISTIQUES"
+              icon={<TrendingUpIcon />}
+              href="/stats"
+              selected={!!matchPath('/stats/*', pathname) || pathname === '/'}
             />
 
 

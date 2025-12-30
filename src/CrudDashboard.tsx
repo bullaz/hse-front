@@ -1,7 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { createHashRouter, RouterProvider } from 'react-router';
 import DashboardLayout from './components/DashboardLayout';
-// import EmployeeList from './components/EmployeeList';
 import EmployeeShow from './components/EmployeeShow';
 import EmployeeCreate from './components/EmployeeCreate';
 import EmployeeEdit from './components/EmployeeEdit';
@@ -21,6 +20,8 @@ import { AuthProvider } from './context/AuthContext';
 import CommentaireList from './components/CommentaireList';
 import MesureControleList from './components/MesureControleList';
 import ListSociete from './components/societeCrud/ListSociete';
+import AddSociete from './components/societeCrud/AddSociete';
+import EditSociete from './components/societeCrud/EditSociete';
 
 
 const router = createHashRouter([
@@ -39,6 +40,14 @@ const router = createHashRouter([
       {
         path: '/societes',
         element: <ProtectedRoute><ListSociete /></ProtectedRoute>,
+      },
+      {
+        path: '/societes/new',
+        element: <ProtectedRoute><AddSociete/></ProtectedRoute>
+      },
+      {
+        path: '/societes/:societeId/edit',
+        element: <ProtectedRoute><EditSociete/></ProtectedRoute>
       },
       {
         path: '/toko5s/toko5/:toko5Id/comments',

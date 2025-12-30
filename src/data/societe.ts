@@ -1,6 +1,7 @@
 import type { GridFilterModel, GridPaginationModel, GridSortModel } from '@mui/x-data-grid';
+import type { AxiosInstance } from 'axios';
 
-export interface Societe{
+export interface Societe {
     societeId: number,
     nom: string
 }
@@ -19,7 +20,7 @@ export async function getManySociete({
 
     let filteredSocietes = [...listSociete];
 
-    // Apply filters (example only)
+    // Apply filters
     if (filterModel?.items?.length) {
         filterModel.items.forEach(({ field, value, operator }) => {
             if (!field || value == null) {
@@ -73,4 +74,48 @@ export async function getManySociete({
         items: paginatedSocietes,
         itemCount: filteredSocietes.length,
     };
+}
+
+
+export async function createOne(data: Omit<Societe, 'societeId'>, axiosInstance: AxiosInstance): Promise<Societe> {
+
+    const newEmployee = {
+        societeId: null,
+        ...data,
+    };
+
+    const response = await axiosInstance.post(`/societes`, newEmployee);
+
+    return response.data as Societe;
+}
+
+
+export async function getOne(societeId: number, axiosInstance: AxiosInstance): Promise<Societe> {
+    const response = await axiosInstance.get(`/societes/${societeId}`);
+    return response.data as Societe;
+}
+
+export async function updateOne(societeId: number, data: Partial<Omit<Societe, 'id'>>, axiosInstance: AxiosInstance): Promise<Societe> {
+    const response = await axiosInstance.put(`/societes/${societeId}`,data);
+    return response.data as Societe;
+}
+
+
+// export async function deleteOne(employeeId: number) {
+//   const employeesStore = getEmployeesStore();
+
+//   setEmployeesStore(employeesStore.filter((employee) => employee.id !== employeeId));
+// }
+
+
+
+type ValidationResult = { issues: { message: string; path: (keyof Societe)[] }[] };
+
+export function validate(societe: Partial<Societe>): ValidationResult {
+    let issues: ValidationResult['issues'] = [];
+
+    if (!societe.nom) {
+        issues = [...issues, { message: 'Le nom est requis', path: ['nom'] }];
+    }
+    return { issues };
 }

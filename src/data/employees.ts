@@ -127,7 +127,7 @@ export async function getOne(employeeId: number) {
   return employeeToShow;
 }
 
-export async function createOne(data: Omit<Employee, 'id'>) {
+export async function createOne(data: Omit<Employee, 'id'>) { //ok
   const employeesStore = getEmployeesStore();
 
   const newEmployee = {
@@ -169,10 +169,10 @@ export async function deleteOne(employeeId: number) {
 
 // Validation follows the [Standard Schema](https://standardschema.dev/).
 
-type ValidationResult = { issues: { message: string; path: (keyof Employee)[] }[] };
+type ValidationResult = { issues: { message: string; path: (keyof Employee)[] }[] }; //ok
 
-export function validate(employee: Partial<Employee>): ValidationResult {
-  let issues: ValidationResult['issues'] = [];
+export function validate(employee: Partial<Employee>): ValidationResult { //ok
+  let issues: ValidationResult['issues'] = []; 
 
   if (!employee.name) {
     issues = [...issues, { message: 'Name is required', path: ['name'] }];

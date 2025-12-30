@@ -6,13 +6,20 @@ import SocieteForm, {
   type SocieteFormState,
 } from './SocieteForm';
 import PageContainer from '../PageContainer';
+import {
+  createOne as createSociete,
+  validate as validateSociete,
+  type Societe,
+} from '../../data/societe';
+import { useAuth } from '../../context/AuthContext';
 
-// const INITIAL_FORM_VALUES: Partial<SocieteFormState['values']> = {
-//   name: 'Market',
-//   isFullTime: true,
-// };
+const INITIAL_FORM_VALUES: Partial<SocieteFormState['values']> = {
+};
 
 export default function SocieteCreate() {
+
+  const { axiosInstance } = useAuth();
+
   const navigate = useNavigate();
 
   const notifications = useNotifications();
@@ -41,7 +48,7 @@ export default function SocieteCreate() {
         errors: newFormErrors,
       }));
     },
-    societe
+    []
   );
 
   const handleFormFieldChange = React.useCallback(
@@ -51,8 +58,9 @@ export default function SocieteCreate() {
         setFormErrors({
           ...formErrors,
           [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
-        societe
-      societe
+        });
+      };
+      
       const newFormValues = { ...formValues, [name]: value };
 
       setFormValues(newFormValues);
@@ -72,12 +80,12 @@ export default function SocieteCreate() {
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
       );
       return;
-    societe
+    }
     setFormErrors({});
 
     try {
-      await createSociete(formValues as Omit<Societe, 'id'>);
-      notifications.show('Employee created successfully.', {
+      await createSociete(formValues as Omit<Societe, 'societeId'>,axiosInstance);
+      notifications.show('Ajout de societe reussie.', {
         severity: 'success',
         autoHideDuration: 3000,
       });
@@ -85,7 +93,7 @@ export default function SocieteCreate() {
       navigate('/societes');
     } catch (createError) {
       notifications.show(
-        `Failed to create employee. Reason: ${(createError as Error).message}`,
+        `Erreur durant l'ajout du societe. Raison: ${(createError as Error).message}`,
         {
           severity: 'error',
           autoHideDuration: 3000,
@@ -93,7 +101,7 @@ export default function SocieteCreate() {
       );
       throw createError;
     }
-  }, [formValues, navigate, notifications, setFormErrors]);
+  }, [formValues, navigate, notifications, setFormErrors,axiosInstance]);
 
   return (
     <PageContainer

@@ -518,7 +518,7 @@ export default function Toko5List() {
     [handleRowDelete, handleQrModalOpen],
   );
 
-  const pageTitle1 = 'LISTE DES TOKO 5';
+  const pageTitle1 = 'liste des toko 5';
   const pageTitle2 = 'liste des toko 5';
 
   const handleDateChange = (newValue: Dayjs | null) => {

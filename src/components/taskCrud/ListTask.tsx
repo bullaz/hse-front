@@ -34,7 +34,7 @@ const INITIAL_PAGE_SIZE = 10;
 //   [key: string]: string | undefined;
 // }
 
-export default function ListSociete() {
+export default function ListTask() {
 
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
