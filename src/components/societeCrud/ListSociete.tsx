@@ -190,7 +190,7 @@ export default function ListSociete() {
             const updatedRows = prev.rows.filter((societe) => societe.societeId !== toDelete.societeId);
             return {
               rows: updatedRows,
-              rowCount: prev.rowCount,
+              rowCount: updatedRows.length,
             };
           });
 

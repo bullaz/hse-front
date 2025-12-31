@@ -20,19 +20,16 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../../hooks/useDialogs/useDialogs';
 import useNotifications from '../../hooks/useNotifications/useNotifications';
 import {
-  getManySociete as getSocietes,
-  type Societe
-} from '../../data/societe';
+  getManyTask as getTasks,
+  deleteOne as deleteTask,
+  type Task
+} from '../../data/task';
 import PageContainer from '../PageContainer';
 import { useAuth } from '../../context/AuthContext';
 import { useState } from 'react';
 import { Button, Stack } from '@mui/material';
 
 const INITIAL_PAGE_SIZE = 10;
-
-// interface ListSocieteParams {
-//   [key: string]: string | undefined;
-// }
 
 export default function ListTask() {
 
@@ -61,7 +58,7 @@ export default function ListTask() {
   );
 
   const [rowsState, setRowsState] = useState<{
-    rows: Societe[];
+    rows: Task[];
     rowCount: number;
   }>({
     rows: [],
@@ -131,16 +128,12 @@ export default function ListTask() {
   const loadData = React.useCallback(async () => {
     setError(null);
     setIsLoading(true);
-
-    const societesReponse = await axiosInstance.get(`/societes`, { params: {} });
-    const list = societesReponse.data._embedded.societes as Societe[];
-
     try {
-      const listData = await getSocietes({
+      const listData = await getTasks({
         paginationModel,
         sortModel,
         filterModel,
-        listSociete: list,
+        axiosInstance
       });
 
       setRowsState({
@@ -159,22 +152,22 @@ export default function ListTask() {
   }, [loadData]);
 
   const handleCreateClick = React.useCallback(() => {
-    navigate('/societes/new');
+    navigate('/tasks/new');
   }, [navigate]);
 
   const handleRowEdit = React.useCallback(
-    (societe: Societe) => () => {
-      navigate(`/societes/${societe.societeId}/edit`);
+    (task: Task) => () => {
+      navigate(`/tasks/${task.taskId}/edit`);
     },
     [navigate],
   );
 
   const handleRowDelete = React.useCallback(
-    (toDelete: Societe) => async () => {
+    (toDelete: Task) => async () => {
       const confirmed = await dialogs.confirm(
-        `Voulez-vous vraiment supprimer la société ${toDelete.nom}?`,
+        `Voulez-vous vraiment supprimer la tâche ${toDelete.nom}?`,
         {
-          title: `Supprimer la société?`,
+          title: `Supprimer la tâche?`,
           severity: 'error',
           okText: 'Supprimer',
           cancelText: 'Annuler',
@@ -184,13 +177,12 @@ export default function ListTask() {
       if (confirmed) {
         setIsLoading(true);
         try {
-          await axiosInstance.delete(`/societes/${toDelete.societeId}`, { params: {} });
-
-          setRowsState(prev => {
-            const updatedRows = prev.rows.filter((societe) => societe.societeId !== toDelete.societeId);
+          const newListTask: Task[] = await deleteTask(toDelete.taskId,rowsState.rows,axiosInstance);
+          
+          setRowsState(() => {
             return {
-              rows: updatedRows,
-              rowCount: prev.rowCount,
+              rows: newListTask,
+              rowCount: newListTask.length,
             };
           });
 
@@ -198,7 +190,7 @@ export default function ListTask() {
             severity: 'success',
             autoHideDuration: 3000,
           });
-          // loadData();
+
         } catch (deleteError) {
           notifications.show(
             `échec de la suppression. Raison:' ${(deleteError as Error).message}`,
@@ -211,7 +203,7 @@ export default function ListTask() {
         setIsLoading(false);
       }
     },
-    [dialogs, notifications, axiosInstance],
+    [dialogs, notifications, axiosInstance, rowsState],
   );
 
   const initialState = React.useMemo(
@@ -224,7 +216,7 @@ export default function ListTask() {
   const columns = React.useMemo<GridColDef[]>(
     () => [
       // { field: 'toko5Id', headerName: 'ID' },
-      { field: 'nom', headerName: 'Nom de la société', width: 200 },
+      { field: 'nom', headerName: 'Nom de la tâche', width: 200 },
       {
         field: 'actions',
         type: 'actions',
@@ -249,7 +241,7 @@ export default function ListTask() {
     [handleRowDelete, handleRowEdit],
   );
 
-  const pageTitle1 = 'Liste des sociétés';
+  const pageTitle1 = 'Liste des tâches';
   //const pageTitle2 = '';
 
 
@@ -257,7 +249,7 @@ export default function ListTask() {
     <PageContainer
       title={pageTitle1}
       breadcrumbs={[
-        { title: 'Liste des sociétés' }
+        { title: 'Liste des tâches' }
       ]}
       actions={
         <Stack direction="row" alignItems="center" spacing={1}>

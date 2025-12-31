@@ -114,7 +114,7 @@ function SocieteEditForm({
       onFieldChange={handleFormFieldChange}
       onSubmit={handleFormSubmit}
       onReset={handleFormReset}
-      submitButtonLabel="sauvegarder"
+      submitButtonLabel="enregistrer"
       backButtonPath={`/societes`}
     />
   );

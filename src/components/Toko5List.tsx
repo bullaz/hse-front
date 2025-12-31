@@ -321,7 +321,7 @@ export default function Toko5List() {
 
             return {
               rows: updatedRows,
-              rowCount: prev.rowCount,
+              rowCount: updatedRows.length,
             };
           });
         });
