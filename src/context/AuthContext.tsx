@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const requestInterceptor = instance.interceptors.request.use(
       (config) => {
-        const token = accessToken;
+        const token = sessionStorage.getItem('access_token');
         if (token && !config.headers.Authorization) {
           config.headers.Authorization = `Bearer ${token}`;
           //config.withCredentials = true;

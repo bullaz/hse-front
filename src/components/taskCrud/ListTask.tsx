@@ -274,7 +274,7 @@ export default function ListTask() {
             rows={rowsState.rows}
             rowCount={rowsState.rowCount}
             columns={columns}
-            getRowId={(row) => row.societeId}
+            getRowId={(row) => row.taskId}
             pagination
             sortingMode="server"
             filterMode="server"

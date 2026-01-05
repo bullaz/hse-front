@@ -1,6 +1,7 @@
 import type { AxiosInstance } from "axios";
 import type { Question } from "./Toko5";
 import type { GridFilterModel, GridPaginationModel, GridSortModel } from "@mui/x-data-grid";
+import { addNewTask } from "../services/toko5Services";
 
 export interface Task {
     taskId: number,
@@ -8,8 +9,15 @@ export interface Task {
     listQuestion: Question[]
 }
 
+export interface TaskDto{
+    taskId: number | null,
+    nom: string,
+    listQuestionId: number[]
+}
+
 export async function getListTask(axiosInstance: AxiosInstance): Promise<Task[]> {
     const response = await axiosInstance.get("/toko5s/tasks");
+    console.log(response.data);
     return response.data as Task[];
 }
 
@@ -87,16 +95,16 @@ export async function getManyTask({
 }
 
 
-export async function createOne(data: Omit<Task, 'societeId'>, axiosInstance: AxiosInstance): Promise<Task> {
+export async function createOne(data: Omit<TaskDto, 'taskId'>, axiosInstance: AxiosInstance): Promise<Task> {
 
-    const newTask = {
-        societeId: null,
+    const newTaskDto: TaskDto = {
+        taskId: null,
         ...data,
     };
 
-    const response = await axiosInstance.post(`/toko5s/tasks`, newTask);
+    const task = await addNewTask(axiosInstance,newTaskDto);
 
-    return response.data as Task;
+    return task;
 }
 
 
@@ -105,7 +113,7 @@ export async function getOne(taskId: number, axiosInstance: AxiosInstance): Prom
     return response.data as Task;
 }
 
-export async function updateOne(taskId: number, data: Partial<Omit<Task, 'id'>>, axiosInstance: AxiosInstance): Promise<Task> {
+export async function updateOne(taskId: number, data: Partial<Omit<Task, 'taskId'>>, axiosInstance: AxiosInstance): Promise<Task> {
     const response = await axiosInstance.put(`/toko5s/tasks/${taskId}`, data);
     return response.data as Task;
 }
@@ -114,4 +122,18 @@ export async function updateOne(taskId: number, data: Partial<Omit<Task, 'id'>>,
 export async function deleteOne(taskId: number, currentListTask: Task[], axiosInstance: AxiosInstance) {
     await axiosInstance.delete(`/toko5s/tasks/${taskId}`);
     return currentListTask.filter((task) => task.taskId !== taskId);
+}
+
+type ValidationResult = { issues: { message: string; path: (keyof Task)[] }[] };
+
+export function validate(task: Partial<Task>): ValidationResult {
+    let issues: ValidationResult['issues'] = [];
+
+    if (!task.nom) {
+        issues = [...issues, { message: 'Le nom est requis', path: ['nom'] }];
+    }
+    if (task.listQuestion?.length === 0){
+        issues = [...issues, { message: 'test liste question validation', path: ['nom'] }];
+    }
+    return { issues };
 }

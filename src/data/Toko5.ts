@@ -6,7 +6,7 @@ import type { GridFilterModel, GridPaginationModel, GridSortModel } from '@mui/x
 export interface Question {
     questionId: number;
     nom: string;
-    pictrogramme: string;
+    pictogramme: string;
     categorie: string;
     required: boolean;
 }

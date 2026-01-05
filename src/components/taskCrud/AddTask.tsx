@@ -9,8 +9,8 @@ import PageContainer from '../PageContainer';
 import {
   createOne as createTask,
   validate as validateTask,
-  type Societe,
-} from '../../data/societe';
+  type TaskDto,
+} from '../../data/task';
 import { useAuth } from '../../context/AuthContext';
 
 const INITIAL_FORM_VALUES: Partial<TaskFormState['values']> = {
@@ -84,7 +84,8 @@ export default function TaskCreate() {
     setFormErrors({});
 
     try {
-      await createTask(formValues as Omit<Societe, 'taskId'>,axiosInstance);
+      console.log(formValues);
+      await createTask(formValues as Omit<TaskDto, 'taskId'>,axiosInstance);
       notifications.show('Ajout de tâche reussie.', {
         severity: 'success',
         autoHideDuration: 3000,
