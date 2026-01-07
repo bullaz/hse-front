@@ -52,6 +52,8 @@ import SockJs from "sockjs-client";
 import { Client } from '@stomp/stompjs';
 import { Slide, toast } from 'react-toastify';
 import { frFR } from '@mui/x-data-grid/locales';
+import type { Task } from '../data/task';
+import type { Societe } from '../data/societe';
 
 const INITIAL_PAGE_SIZE = 10;
 
@@ -431,6 +433,20 @@ export default function Toko5List() {
       //   valueOptions: ['Market', 'Finance', 'Development'],
       //   width: 160,
       // },
+      {
+        field: 'societe', headerName: 'Société',
+        width: 160,
+        renderCell: (params: GridCellParams) => {
+          return (params.value as Societe).nom
+        },
+      },
+      {
+        field: 'task', headerName: 'Tâche',
+        width: 160,
+        renderCell: (params: GridCellParams) => {
+          return (params.value as Task).nom
+        },
+      },
       {
         field: 'listMesureControle',
         headerName: 'Mesures de controle',
