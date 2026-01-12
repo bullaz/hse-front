@@ -24,6 +24,7 @@ import AddSociete from './components/societeCrud/AddSociete';
 import EditSociete from './components/societeCrud/EditSociete';
 import ListTask from './components/taskCrud/ListTask';
 import AddTask from './components/taskCrud/AddTask';
+import Stat from './components/Stat';
 
 const router = createHashRouter([
   {
@@ -77,6 +78,10 @@ const router = createHashRouter([
       {
         path: '/tasks/new',
         element: <ProtectedRoute><AddTask/></ProtectedRoute>
+      },
+      {
+        path: '/stats',
+        element: <ProtectedRoute><Stat /></ProtectedRoute>
       },
       // Fallback route for the example routes in dashboard sidebar items
       {
