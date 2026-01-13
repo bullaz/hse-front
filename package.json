@@ -26,6 +26,7 @@
     "axios": "^1.13.2",
     "dayjs": "latest",
     "firebase": "^12.6.0",
+    "jwt-decode": "^4.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-qr-code": "^2.0.18",

@@ -26,12 +26,21 @@ import {
 } from '../mixins';
 import { Avatar, Stack, Typography } from '@mui/material';
 import OptionsMenu from './OptionsMenu';
+import PersonIcon from '@mui/icons-material/Person';
+import { jwtDecode } from "jwt-decode";
 
 export interface DashboardSidebarProps {
   expanded?: boolean;
   setExpanded: (expanded: boolean) => void;
   disableCollapsibleSidebar?: boolean;
   container?: Element;
+}
+
+interface JwtPayload {
+  sub: string;
+  nom: string;
+  prenom: string;
+  // Ajoutez d'autres champs si nécessaire
 }
 
 export default function DashboardSidebar({
@@ -51,6 +60,10 @@ export default function DashboardSidebar({
 
   const [isFullyExpanded, setIsFullyExpanded] = React.useState(expanded);
   const [isFullyCollapsed, setIsFullyCollapsed] = React.useState(!expanded);
+
+  const [nom, setNom] = React.useState<string>("");
+  const [prenom, setPrenom] = React.useState<string>("");
+  const [email, setEmail] = React.useState<string>("");
 
   React.useEffect(() => {
     if (expanded) {
@@ -79,6 +92,17 @@ export default function DashboardSidebar({
 
     return () => { };
   }, [expanded, theme.transitions.duration.leavingScreen]);
+
+  React.useEffect(() => {
+    const token = sessionStorage.getItem("access_token");
+    console.log("token sidebar:", token);
+    if (token) {
+      setNom(jwtDecode<JwtPayload>(token).nom);
+      setPrenom(jwtDecode<JwtPayload>(token).prenom);
+      setEmail(jwtDecode<JwtPayload>(token).sub);
+    }
+  }, []);
+
 
   const mini = !disableCollapsibleSidebar && !expanded;
 
@@ -236,23 +260,25 @@ export default function DashboardSidebar({
         >
           <Avatar
             sizes="small"
-            alt="Riley Carter"
-            src="/static/images/avatar/7.jpg"
+            alt="avatar"
+            src=""
             sx={{ width: 36, height: 36 }}
-          />
+          >
+            <PersonIcon />
+          </Avatar>
           <Box sx={{ mr: 'auto' }}>
             <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-              Riley Carter
+              {prenom} {nom}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-              riley@email.com
+              {email}
             </Typography>
           </Box>
           <OptionsMenu />
         </Stack>
       </React.Fragment>
     ),
-    [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname],
+    [mini, hasDrawerTransitions, isFullyExpanded, expandedItemIds, pathname, prenom, nom, email],
   );
 
   const getDrawerSharedSx = React.useCallback(

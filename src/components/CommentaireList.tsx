@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 // import Tooltip from '@mui/material/Tooltip';
 import {
   DataGrid,
-  GridActionsCellItem,
+  // GridActionsCellItem,
   gridClasses
 } from '@mui/x-data-grid';
 import type {
@@ -19,10 +19,10 @@ import type {
 //import AddIcon from '@mui/icons-material/Add';
 // import RefreshIcon from '@mui/icons-material/Refresh';
 //import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
-import { useDialogs } from '../hooks/useDialogs/useDialogs';
-import useNotifications from '../hooks/useNotifications/useNotifications';
+// import { useDialogs } from '../hooks/useDialogs/useDialogs';
+// import useNotifications from '../hooks/useNotifications/useNotifications';
 import {
   getManyComments as getComs,
   type Commentaire
@@ -75,8 +75,8 @@ export default function CommentaireList() {
   //   }
   // };
 
-  const dialogs = useDialogs();
-  const notifications = useNotifications();
+  // const dialogs = useDialogs();
+  // const notifications = useNotifications();
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: searchParams.get('page') ? Number(searchParams.get('page')) : 0,
@@ -214,42 +214,42 @@ export default function CommentaireList() {
   //   [navigate],
   // );
 
-  const handleRowDelete = React.useCallback(
-    (toko5: Commentaire) => async () => {
-      const confirmed = await dialogs.confirm(
-        `Do you wish to delete ${toko5.nom}?`,
-        {
-          title: `Delete employee?`,
-          severity: 'error',
-          okText: 'Delete',
-          cancelText: 'Cancel',
-        },
-      );
+  // const handleRowDelete = React.useCallback(
+  //   (toko5: Commentaire) => async () => {
+  //     const confirmed = await dialogs.confirm(
+  //       `Do you wish to delete ${toko5.nom}?`,
+  //       {
+  //         title: `Delete employee?`,
+  //         severity: 'error',
+  //         okText: 'Delete',
+  //         cancelText: 'Cancel',
+  //       },
+  //     );
 
-      if (confirmed) {
-        setIsLoading(true);
-        try {
-          //await deleteToko5((toko5.toko5Id));
+  //     if (confirmed) {
+  //       setIsLoading(true);
+  //       try {
+  //         //await deleteToko5((toko5.toko5Id));
 
-          notifications.show('toko5 deleted successfully.', {
-            severity: 'success',
-            autoHideDuration: 3000,
-          });
-          loadData();
-        } catch (deleteError) {
-          notifications.show(
-            `Failed to delete toko5. Reason:' ${(deleteError as Error).message}`,
-            {
-              severity: 'error',
-              autoHideDuration: 3000,
-            },
-          );
-        }
-        setIsLoading(false);
-      }
-    },
-    [dialogs, notifications, loadData],
-  );
+  //         notifications.show('toko5 deleted successfully.', {
+  //           severity: 'success',
+  //           autoHideDuration: 3000,
+  //         });
+  //         loadData();
+  //       } catch (deleteError) {
+  //         notifications.show(
+  //           `Failed to delete toko5. Reason:' ${(deleteError as Error).message}`,
+  //           {
+  //             severity: 'error',
+  //             autoHideDuration: 3000,
+  //           },
+  //         );
+  //       }
+  //       setIsLoading(false);
+  //     }
+  //   },
+  //   [dialogs, notifications, loadData],
+  // );
 
   const initialState = React.useMemo(
     () => ({
@@ -269,17 +269,17 @@ export default function CommentaireList() {
         type: 'actions',
         flex: 1,
         align: 'right',
-        getActions: ({ row }) => [
-          <GridActionsCellItem
-            key="delete-item"
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleRowDelete(row)}
-          />,
+        getActions: (/*{ row }*/) => [
+          // <GridActionsCellItem
+          //   key="delete-item"
+          //   icon={<DeleteIcon />}
+          //   label="Delete"
+          //   onClick={handleRowDelete(row)}
+          // />,
         ],
       },
     ],
-    [handleRowDelete],
+    [],
   );
 
   const pageTitle1 = 'COMMENTAIRES DU TOKO5 DE ?';
