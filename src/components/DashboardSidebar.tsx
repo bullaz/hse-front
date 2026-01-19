@@ -8,10 +8,10 @@ import Toolbar from '@mui/material/Toolbar';
 import type { } from '@mui/material/themeCssVarsAugmentation';
 import SafetyCheckIcon from '@mui/icons-material/SafetyCheck';
 // import BarChartIcon from '@mui/icons-material/BarChart';
-import DescriptionIcon from '@mui/icons-material/Description';
+// import DescriptionIcon from '@mui/icons-material/Description';
 import BusinessIcon from '@mui/icons-material/Business';
 // import LayersIcon from '@mui/icons-material/Layers';
-import TocIcon from '@mui/icons-material/Toc';
+// import TocIcon from '@mui/icons-material/Toc';
 import { matchPath, useLocation } from 'react-router';
 import DashboardSidebarContext from '../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
@@ -204,7 +204,7 @@ export default function DashboardSidebar({
 
 
             <DashboardSidebarHeaderItem>Autre taches</DashboardSidebarHeaderItem>
-            <DashboardSidebarPageItem
+            {/* <DashboardSidebarPageItem
               id="CRUD"
               title="CRUD"
               icon={<TocIcon />}
@@ -238,7 +238,7 @@ export default function DashboardSidebar({
                   />
                 </List>
               }
-            />
+            /> */}
             {/* <DashboardSidebarPageItem
               id="autre2"
               title="autre2"

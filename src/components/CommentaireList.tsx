@@ -282,7 +282,7 @@ export default function CommentaireList() {
     [],
   );
 
-  const pageTitle1 = 'COMMENTAIRES DU TOKO5 DE ?';
+  const pageTitle1 = 'Commentaires';
   //const pageTitle2 = '';
 
 
@@ -291,7 +291,7 @@ export default function CommentaireList() {
       title={pageTitle1}
       breadcrumbs={[
         { title: 'liste des toko 5', path: '/toko5s' },
-        { title: 'Comments' }
+        { title: 'Commentaires' }
       ]}
       // actions={
       //   <Stack direction="row" alignItems="center" spacing={1}>

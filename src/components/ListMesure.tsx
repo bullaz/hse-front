@@ -26,7 +26,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { useDialogs } from '../hooks/useDialogs/useDialogs';
 import useNotifications from '../hooks/useNotifications/useNotifications';
 import {
-  deleteOne as deleteToko5,
+  // deleteOne as deleteToko5,
   getMany as getToko5s,
   type Toko5,
 } from '../data/Toko5';
@@ -197,7 +197,7 @@ export default function ListMesure() {
       if (confirmed) {
         setIsLoading(true);
         try {
-          await deleteToko5((toko5.toko5Id));
+          // await deleteToko5((toko5.toko5Id));
 
           notifications.show('toko5 deleted successfully.', {
             severity: 'success',

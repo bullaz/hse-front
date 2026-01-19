@@ -292,7 +292,7 @@ export default function MesureControleList() {
     [],
   );
 
-  const pageTitle1 = 'MESURES DE CONTROLE PRISES SUR TOKO5 DE ?';
+  const pageTitle1 = 'Mesures de contrôle prises';
   //const pageTitle2 = '';
 
 
@@ -301,7 +301,7 @@ export default function MesureControleList() {
       title={pageTitle1}
       breadcrumbs={[
         { title: 'liste des toko 5', path: '/toko5s' },
-        { title: 'Comments' }
+        { title: 'Mesures' }
       ]}
     // actions={
     //   <Stack direction="row" alignItems="center" spacing={1}>
