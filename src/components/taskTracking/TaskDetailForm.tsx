@@ -7,8 +7,8 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select, type SelectChangeEvent } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { FormControl, FormHelperText, InputLabel, MenuItem, Select, type SelectChangeEvent, type SelectProps } from "@mui/material";
+import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import type { TaskDetailDto } from "../../data/TaskDetail";
@@ -141,15 +141,15 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
 
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                value={formValues.date ? dayjs(formValues.joinDate) : null}
-                onChange={handleDateFieldChange("joinDate")}
-                name="joinDate"
-                label="Join date"
+              <DateTimePicker
+                value={formValues.date ? dayjs(formValues.date) : null}
+                onChange={handleDateFieldChange("joinDateTime")}
+                name="joinDateTime"
+                label="Join date & time"
                 slotProps={{
                   textField: {
-                    error: !!formErrors.joinDate,
-                    helperText: formErrors.joinDate ?? " ",
+                    error: !!formErrors.date,
+                    helperText: formErrors.date ?? " ",
                     fullWidth: true,
                   },
                 }}
@@ -160,19 +160,19 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
             <FormControl error={!!formErrors.taskId} fullWidth>
               <InputLabel id="task-label">Tâche</InputLabel>
               <Select
-                value={formValues.role ?? ""}
+                value={formValues.taskId ?? 0}
                 onChange={handleSelectFieldChange as SelectProps["onChange"]}
                 labelId="task-label"
                 name="tâche"
                 label="Tâche"
-                defaultValue=""
+                defaultValue={0}
                 fullWidth
               >
-                <MenuItem value="Market">Market</MenuItem>
-                <MenuItem value="Finance">Finance</MenuItem>
-                <MenuItem value="Development">Development</MenuItem>
+                <MenuItem value={0}>Market</MenuItem>
+                <MenuItem value={0}>Finance</MenuItem>
+                <MenuItem value={0}>Development</MenuItem>
               </Select>
-              <FormHelperText>{formErrors.role ?? " "}</FormHelperText>
+              {/* <FormHelperText>{formErrors.taskId ?? " "}</FormHelperText> */}
             </FormControl>
           </Grid>
         </Grid>
