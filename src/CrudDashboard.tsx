@@ -1,9 +1,6 @@
 import CssBaseline from '@mui/material/CssBaseline';
 import { createHashRouter, RouterProvider } from 'react-router';
 import DashboardLayout from './components/DashboardLayout';
-import EmployeeShow from './components/EmployeeShow';
-import EmployeeCreate from './components/EmployeeCreate';
-import EmployeeEdit from './components/EmployeeEdit';
 import NotificationsProvider from './hooks/useNotifications/NotificationsProvider';
 import DialogsProvider from './hooks/useDialogs/DialogsProvider';
 import Toko5List from './components/Toko5List';
@@ -25,6 +22,7 @@ import EditSociete from './components/societeCrud/EditSociete';
 import ListTask from './components/taskCrud/ListTask';
 import AddTask from './components/taskCrud/AddTask';
 import Stat from './components/Stat';
+import AddNewTask from './components/taskTracking/AddTask';
 
 const router = createHashRouter([
   {
@@ -33,57 +31,57 @@ const router = createHashRouter([
   },
   {
     path: '/',
-    element: <DashboardLayout />,
+    element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
     children: [
+      //TAKE 5
       {
         path: '/toko5s',
-        element: <ProtectedRoute><Toko5List /></ProtectedRoute>,
+        element: <Toko5List/>,
       },
       {
         path: '/toko5s/toko5/:toko5Id/comments',
-        element: <ProtectedRoute><CommentaireList /></ProtectedRoute>,
+        element: <CommentaireList />,
       },
       {
         path: '/toko5s/toko5/:toko5Id/mesures',
-        element: <ProtectedRoute><MesureControleList /></ProtectedRoute>,
+        element: <MesureControleList />,
       },
+
+      //TASK TRACKING
       {
-        path: '/toko5s/:employeeId',
-        Component: EmployeeShow,
+        path: '/task_tracking/add_task',
+        element: <AddNewTask />
       },
-      {
-        path: '/toko5s/new',
-        Component: EmployeeCreate,
-      },
-      {
-        path: '/toko5s/:employeeId/edit',
-        Component: EmployeeEdit,
-      },
+
+      //CRUD SOCIETE
       {
         path: '/societes',
-        element: <ProtectedRoute><ListSociete /></ProtectedRoute>,
+        element: <ListSociete />,
       },
       {
         path: '/societes/new',
-        element: <ProtectedRoute><AddSociete/></ProtectedRoute>
+        element: <AddSociete/>
       },
       {
         path: '/societes/:societeId/edit',
-        element: <ProtectedRoute><EditSociete/></ProtectedRoute>
+        element: <EditSociete/>,
       },
+
+      //CRUD TASK
       {
         path: '/tasks',
-        element: <ProtectedRoute><ListTask/></ProtectedRoute>
+        element: <ListTask/>
       },
       {
         path: '/tasks/new',
-        element: <ProtectedRoute><AddTask/></ProtectedRoute>
+        element: <AddTask/>
       },
       {
         path: '/stats',
-        element: <ProtectedRoute><Stat /></ProtectedRoute>
+        element: <Stat />
       },
-      // Fallback route for the example routes in dashboard sidebar items
+
+      // Fallback route for other routes
       {
         path: '*',
         Component: Toko5List,

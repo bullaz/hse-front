@@ -534,8 +534,8 @@ export default function Toko5List() {
     [handleQrModalOpen],
   );
 
-  const pageTitle1 = 'liste des toko 5';
-  const pageTitle2 = 'liste des toko 5';
+  const pageTitle1 = 'liste des take 5';
+  const pageTitle2 = 'liste des take 5';
 
   const handleDateChange = (newValue: Dayjs | null) => {
     if (newValue !== null) {

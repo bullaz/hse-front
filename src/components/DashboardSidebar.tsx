@@ -7,11 +7,7 @@ import List from '@mui/material/List';
 import Toolbar from '@mui/material/Toolbar';
 import type { } from '@mui/material/themeCssVarsAugmentation';
 import SafetyCheckIcon from '@mui/icons-material/SafetyCheck';
-// import BarChartIcon from '@mui/icons-material/BarChart';
-// import DescriptionIcon from '@mui/icons-material/Description';
 import BusinessIcon from '@mui/icons-material/Business';
-// import LayersIcon from '@mui/icons-material/Layers';
-// import TocIcon from '@mui/icons-material/Toc';
 import { matchPath, useLocation } from 'react-router';
 import DashboardSidebarContext from '../context/DashboardSidebarContext';
 import { DRAWER_WIDTH, MINI_DRAWER_WIDTH } from '../constants';
@@ -40,7 +36,7 @@ interface JwtPayload {
   sub: string;
   nom: string;
   prenom: string;
-  // Ajoutez d'autres champs si nécessaire
+  // Add other fields if necessary
 }
 
 export default function DashboardSidebar({
@@ -115,9 +111,7 @@ export default function DashboardSidebar({
 
   const handlePageItemClick = React.useCallback(
     (itemId: string, hasNestedNavigation: boolean) => {
-      // console.log("handlepageitemclick");
       if (hasNestedNavigation && !mini) {
-        // console.log("hasNestedNavigation");
         setExpandedItemIds((previousValue) =>
           previousValue.includes(itemId)
             ? previousValue.filter(
@@ -165,53 +159,23 @@ export default function DashboardSidebar({
             }}
           >
             {/* <DashboardSidebarHeaderItem>Taches principals</DashboardSidebarHeaderItem> */}
-            <DashboardSidebarHeaderItem>TOKO 5</DashboardSidebarHeaderItem>
+            <DashboardSidebarHeaderItem>TAKE 5</DashboardSidebarHeaderItem>
             <DashboardSidebarPageItem
               id="toko5s"
-              title="TOKO 5"
+              title="Take 5"
               icon={<SafetyCheckIcon />}
               href="/toko5s"
               selected={!!matchPath('/toko5s/*', pathname) || pathname === '/'}
             />
 
             <DashboardSidebarPageItem
-              id="societes"
-              title="SOCIÉTÉS"
-              icon={<BusinessIcon />}
-              href="/societes"
-              selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
-            />
-
-            <DashboardSidebarPageItem
-              id="tasks"
-              title="TÂCHES"
-              icon={<EngineeringIcon />}
-              href="/tasks"
-              selected={!!matchPath('/tasks/*', pathname) || pathname === '/'}
-            />
-
-            <DashboardSidebarPageItem
-              id="stats"
-              title="STATISTIQUES"
-              icon={<TrendingUpIcon />}
-              href="/stats"
-              selected={!!matchPath('/stats/*', pathname) || pathname === '/'}
-            />
-
-
-            <DashboardSidebarDividerItem />
-
-
-
-            <DashboardSidebarHeaderItem>Autre taches</DashboardSidebarHeaderItem>
-            {/* <DashboardSidebarPageItem
-              id="CRUD"
-              title="CRUD"
-              icon={<TocIcon />}
-              href="/crud"
-              selected={!!matchPath('/crud', pathname)}
-              defaultExpanded={!!matchPath('/crud', pathname)}
-              expanded={expandedItemIds.includes('crud')}
+              id="task_tracking"
+              title="Suivi de tâches"
+              icon={< TrendingUpIcon />}
+              href="/task_tracking"
+              selected={!!matchPath('/task_tracking', pathname)}
+              defaultExpanded={!!matchPath('/task_tracking', pathname)}
+              expanded={expandedItemIds.includes('task_tracking')}
               nestedNavigation={
                 <List
                   dense
@@ -223,29 +187,73 @@ export default function DashboardSidebar({
                   }}
                 >
                   <DashboardSidebarPageItem
-                    id="sales"
-                    title="Sales"
-                    icon={<DescriptionIcon />}
-                    href="/crud/sales"
-                    selected={!!matchPath('/crud/sales', pathname)}
+                    id="tasks"
+                    title="Ajouter une nouvelle tâche"
+                    icon={<EngineeringIcon />}
+                    href="/task_tracking/tasks"
+                    selected={!!matchPath('/tasks/*', pathname) || pathname === '/'}
                   />
+
                   <DashboardSidebarPageItem
-                    id="traffic"
-                    title="Traffic"
-                    icon={<DescriptionIcon />}
-                    href="/crud/traffic"
-                    selected={!!matchPath('/crud/traffic', pathname)}
+                    id="societes"
+                    title="Suivi des tâches"
+                    icon={<BusinessIcon />}
+                    href="/task_tracking/add_task"
+                    selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
                   />
                 </List>
               }
-            /> */}
-            {/* <DashboardSidebarPageItem
-              id="autre2"
-              title="autre2"
-              icon={<LayersIcon />}
-              href="/integrations"
-              selected={!!matchPath('/integrations', pathname)}
-            /> */}
+            />
+
+
+            <DashboardSidebarPageItem
+              id="stats"
+              title="Statistiques"
+              icon={<TrendingUpIcon />}
+              href="/stats"
+              selected={!!matchPath('/stats/*', pathname) || pathname === '/'}
+            />
+
+            <DashboardSidebarPageItem
+              id="crud_take5"
+              title="Gestion de contenu"
+              icon={< TrendingUpIcon />}
+              href="/crud_take5"
+              selected={!!matchPath('/crud_take5', pathname)}
+              defaultExpanded={!!matchPath('/crud_take5', pathname)}
+              expanded={expandedItemIds.includes('crud_take5')}
+              nestedNavigation={
+                <List
+                  dense
+                  sx={{
+                    padding: 0,
+                    my: 1,
+                    pl: mini ? 0 : 1,
+                    minWidth: 240,
+                  }}
+                >
+                  <DashboardSidebarPageItem
+                    id="tasks"
+                    title="Tâches"
+                    icon={<EngineeringIcon />}
+                    href="/tasks"
+                    selected={!!matchPath('/tasks/*', pathname) || pathname === '/'}
+                  />
+
+                  <DashboardSidebarPageItem
+                    id="societes"
+                    title="Sociétés"
+                    icon={<BusinessIcon />}
+                    href="/societes"
+                    selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
+                  />
+                </List>
+              }
+            />
+
+            <DashboardSidebarDividerItem />
+
+            <DashboardSidebarHeaderItem>Autres tâches</DashboardSidebarHeaderItem>
           </List>
         </Box>
         <Stack
