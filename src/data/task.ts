@@ -6,12 +6,14 @@ import { addNewTask } from "../services/toko5Services";
 export interface Task {
     taskId: number,
     nom: string,
+    abbreviation: string,
     listQuestion: Question[]
 }
 
 export interface TaskDto{
     taskId: number | null,
     nom: string,
+    abbreviation: string,
     listQuestionId: number[]
 }
 

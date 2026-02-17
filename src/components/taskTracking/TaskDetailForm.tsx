@@ -10,29 +10,32 @@ import { useNavigate } from "react-router";
 import { FormControl, FormHelperText, InputLabel, MenuItem, Select, type SelectChangeEvent, type SelectProps } from "@mui/material";
 import { DatePicker, DateTimePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import type { TaskDetailDto } from "../../data/TaskDetail";
+import type { Task } from "../../data/task";
+import { useAuth } from "../../context/AuthContext";
 
-export interface TaskDetailDtoFormState {
-  values: TaskDetailDto;
-  errors: Partial<Record<keyof TaskDetailDtoFormState["values"], string>>;
+export interface TaskDetailFormState {
+  values: Partial<Omit<TaskDetailDto, "taskDetailId">>;
+  errors: Partial<Record<keyof TaskDetailFormState["values"], string>>;
 }
 
 export type FormFieldValue = string | string[] | number | boolean | File | null;
 
-export interface TaskDetailDtoFormProps {
-  formState: TaskDetailDtoFormState;
+export interface TaskDetailFormProps {
+  formState: TaskDetailFormState;
   onFieldChange: (
-    name: keyof TaskDetailDtoFormState["values"],
+    name: keyof TaskDetailFormState["values"],
     value: FormFieldValue
   ) => void;
-  onSubmit: (formValues: Partial<TaskDetailDtoFormState["values"]>) => Promise<void>;
-  onReset?: (formValues: Partial<TaskDetailDtoFormState["values"]>) => void;
+  onSubmit: (formValues: Partial<TaskDetailFormState["values"]>) => Promise<void>;
+  onReset?: (formValues: Partial<TaskDetailFormState["values"]>) => void;
   submitButtonLabel: string;
   backButtonPath?: string;
+  listTask: Task[];
 }
 
-export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
+export default function TaskDetailForm(props: TaskDetailFormProps) {
   const {
     formState,
     onFieldChange,
@@ -40,10 +43,13 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
     onReset,
     submitButtonLabel,
     backButtonPath,
+    listTask
   } = props;
 
   const formValues = formState.values;
   const formErrors = formState.errors;
+
+  const { axiosInstance } = useAuth();
 
   const navigate = useNavigate();
 
@@ -66,7 +72,7 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
   const handleTextFieldChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFieldChange(
-        event.target.name as keyof TaskDetailDtoFormState["values"],
+        event.target.name as keyof TaskDetailFormState["values"],
         event.target.value
       );
     },
@@ -76,7 +82,7 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
   const handleNumberFieldChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       onFieldChange(
-        event.target.name as keyof TaskDetailDtoFormState["values"],
+        event.target.name as keyof TaskDetailFormState["values"],
         Number(event.target.value)
       );
     },
@@ -86,11 +92,22 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
   const handleSelectFieldChange = React.useCallback(
     (event: SelectChangeEvent) => {
       onFieldChange(
-        event.target.name as keyof TaskDetailDtoFormState["values"],
+        event.target.name as keyof TaskDetailFormState["values"],
         event.target.value
       );
     },
     [onFieldChange]
+  );
+
+  const handleDateFieldChange = React.useCallback(
+    (fieldName: keyof TaskDetailFormState["values"]) => (value: Dayjs | null) => {
+      if (value?.isValid()) {
+        onFieldChange(fieldName, value.toISOString() ?? null);
+      } else if (formValues[fieldName]) {
+        onFieldChange(fieldName, null);
+      }
+    },
+    [formValues, onFieldChange]
   );
 
   const handleReset = React.useCallback(() => {
@@ -128,10 +145,10 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
 
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <TextField
-              value={formValues.description ?? ""}
+              value={formValues.workersNumber ?? 1}
               onChange={handleNumberFieldChange}
               name="workersNumber"
-              label="Nombre d'intervenanta"
+              label="Nombre d'intervenants"
               type="number"
               error={!!formErrors.workersNumber}
               helperText={formErrors.workersNumber ?? " "}
@@ -142,10 +159,11 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
           <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DateTimePicker
+                defaultValue={dayjs()}
                 value={formValues.date ? dayjs(formValues.date) : null}
-                onChange={handleDateFieldChange("joinDateTime")}
-                name="joinDateTime"
-                label="Join date & time"
+                onChange={ handleDateFieldChange('date') }
+                name="date"
+                label="Date et heure"
                 slotProps={{
                   textField: {
                     error: !!formErrors.date,
@@ -160,17 +178,18 @@ export default function TaskDetailDtoForm(props: TaskDetailDtoFormProps) {
             <FormControl error={!!formErrors.taskId} fullWidth>
               <InputLabel id="task-label">Tâche</InputLabel>
               <Select
-                value={formValues.taskId ?? 0}
-                onChange={handleSelectFieldChange as SelectProps["onChange"]}
+                value={formValues.taskId}
+                //onChange={handleSelectFieldChange as SelectProps["onChange"]}
                 labelId="task-label"
                 name="tâche"
                 label="Tâche"
-                defaultValue={0}
                 fullWidth
+                defaultValue={listTask[0].taskId}
               >
-                <MenuItem value={0}>Market</MenuItem>
-                <MenuItem value={0}>Finance</MenuItem>
-                <MenuItem value={0}>Development</MenuItem>
+                {listTask && (listTask.map((task: Task) => (
+                  <MenuItem key={task.taskId} value={task.taskId}>{task.nom}</MenuItem>
+                ))
+                )}
               </Select>
               {/* <FormHelperText>{formErrors.taskId ?? " "}</FormHelperText> */}
             </FormControl>

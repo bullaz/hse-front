@@ -173,7 +173,7 @@ export default function DashboardSidebar({
               title="Suivi de tâches"
               icon={< TrendingUpIcon />}
               href="/task_tracking"
-              selected={!!matchPath('/task_tracking', pathname)}
+              selected={!!matchPath('/task_tracking/*', pathname)}
               defaultExpanded={!!matchPath('/task_tracking', pathname)}
               expanded={expandedItemIds.includes('task_tracking')}
               nestedNavigation={
@@ -190,16 +190,16 @@ export default function DashboardSidebar({
                     id="tasks"
                     title="Ajouter une nouvelle tâche"
                     icon={<EngineeringIcon />}
-                    href="/task_tracking/tasks"
-                    selected={!!matchPath('/tasks/*', pathname) || pathname === '/'}
+                    href="/task_tracking/add_task"
+                    selected={!!matchPath('/task_tracking/add_task', pathname) || pathname === '/'}
                   />
 
                   <DashboardSidebarPageItem
                     id="societes"
                     title="Suivi des tâches"
                     icon={<BusinessIcon />}
-                    href="/task_tracking/add_task"
-                    selected={!!matchPath('/societes/*', pathname) || pathname === '/'}
+                    href="/task_tracking/tasks"
+                    selected={!!matchPath('/task_tracking/tasks', pathname) || pathname === '/'}
                   />
                 </List>
               }

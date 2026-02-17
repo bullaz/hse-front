@@ -216,7 +216,8 @@ export default function ListTask() {
   const columns = React.useMemo<GridColDef[]>(
     () => [
       // { field: 'toko5Id', headerName: 'ID' },
-      { field: 'nom', headerName: 'Nom de la tâche', width: 200 },
+      { field: 'nom', headerName: 'Nom de la tâche', width: 400 },
+      { field: 'abbreviation', headerName: 'abréviation', width: 400 },
       {
         field: 'actions',
         type: 'actions',

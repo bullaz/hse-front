@@ -1,30 +1,32 @@
 import * as React from 'react';
 import { useNavigate } from 'react-router';
 import useNotifications from '../../hooks/useNotifications/useNotifications';
-import SocieteForm, {
-  type FormFieldValue,
-  type SocieteFormState,
-} from './SocieteForm';
 import PageContainer from '../PageContainer';
 import {
-  createOne as createSociete,
-  validate as validateSociete,
-  type Societe,
-} from '../../data/societe';
+  createOne as createTask,
+  validate as validateTask,
+  type TaskDetailDto,
+} from '../../data/TaskDetail';
 import { useAuth } from '../../context/AuthContext';
+import type { FormFieldValue, TaskDetailFormState } from './TaskDetailForm';
+import TaskDetailForm from './TaskDetailForm';
+import type { Task } from '../../data/task';
+import { getListTask } from '../../services/toko5Services';
 
-const INITIAL_FORM_VALUES: Partial<SocieteFormState['values']> = {
+const INITIAL_FORM_VALUES: Partial<TaskDetailFormState['values']> = {
 };
 
 export default function AddNewTask() {
 
   const { axiosInstance } = useAuth();
 
+  const [listTask, setListTask] = React.useState<Task[]>();
+
   const navigate = useNavigate();
 
   const notifications = useNotifications();
 
-  const [formState, setFormState] = React.useState<SocieteFormState>(() => ({
+  const [formState, setFormState] = React.useState<TaskDetailFormState>(() => ({
     values: INITIAL_FORM_VALUES,
     errors: {},
   }));
@@ -32,7 +34,7 @@ export default function AddNewTask() {
   const formErrors = formState.errors;
 
   const setFormValues = React.useCallback(
-    (newFormValues: Partial<SocieteFormState['values']>) => {
+    (newFormValues: Partial<TaskDetailFormState['values']>) => {
       setFormState((previousState) => ({
         ...previousState,
         values: newFormValues,
@@ -42,7 +44,7 @@ export default function AddNewTask() {
   );
 
   const setFormErrors = React.useCallback(
-    (newFormErrors: Partial<SocieteFormState['errors']>) => {
+    (newFormErrors: Partial<TaskDetailFormState['errors']>) => {
       setFormState((previousState) => ({
         ...previousState,
         errors: newFormErrors,
@@ -52,15 +54,15 @@ export default function AddNewTask() {
   );
 
   const handleFormFieldChange = React.useCallback(
-    (name: keyof SocieteFormState['values'], value: FormFieldValue) => {
-      const validateField = async (values: Partial<SocieteFormState['values']>) => {
-        const { issues } = validateSociete(values);
+    (name: keyof TaskDetailFormState['values'], value: FormFieldValue) => {
+      const validateField = async (values: Partial<TaskDetailFormState['values']>) => {
+        const { issues } = validateTask(values);
         setFormErrors({
           ...formErrors,
           [name]: issues?.find((issue) => issue.path?.[0] === name)?.message,
         });
       };
-      
+
       const newFormValues = { ...formValues, [name]: value };
 
       setFormValues(newFormValues);
@@ -74,18 +76,18 @@ export default function AddNewTask() {
   }, [setFormValues]);
 
   const handleFormSubmit = React.useCallback(async () => {
-    const { issues } = validateSociete(formValues);
+    const { issues } = validateTask(formValues);
     if (issues && issues.length > 0) {
       setFormErrors(
         Object.fromEntries(issues.map((issue) => [issue.path?.[0], issue.message])),
       );
-      return;
+      return ;
     }
     setFormErrors({});
 
     try {
-      await createSociete(formValues as Omit<Societe, 'societeId'>,axiosInstance);
-      notifications.show('Ajout de societe reussie.', {
+      await createTask(axiosInstance, formValues as Omit<TaskDetailDto, 'taskDetailId'>);
+      notifications.show('Ajout de tâche reussi.', {
         severity: 'success',
         autoHideDuration: 3000,
       });
@@ -93,7 +95,7 @@ export default function AddNewTask() {
       navigate('/societes');
     } catch (createError) {
       notifications.show(
-        `Erreur durant l'ajout du societe. Raison: ${(createError as Error).message}`,
+        `Erreur durant l'ajout de la tâche. Raison: ${(createError as Error).message}`,
         {
           severity: 'error',
           autoHideDuration: 3000,
@@ -101,20 +103,31 @@ export default function AddNewTask() {
       );
       throw createError;
     }
-  }, [formValues, navigate, notifications, setFormErrors,axiosInstance]);
+  }, [formValues, navigate, notifications, setFormErrors, axiosInstance]);
+
+  const initListTask = async () => {
+    const list: Task[] = await getListTask(axiosInstance);
+    setListTask(list);
+  }
+  React.useEffect(() => {
+    initListTask();
+  }, [])
 
   return (
     <PageContainer
       title="Planifier une tâche"
-      breadcrumbs={[{ title: 'Liste des sociétés', path: '/societes' }, { title: 'Ajouter' }]}
+      breadcrumbs={[{ title: 'Les tâche planifiée', path: '/societes' }, { title: 'Ajouter' }]}
     >
-      <SocieteForm
-        formState={formState}
-        onFieldChange={handleFormFieldChange}
-        onSubmit={handleFormSubmit}
-        onReset={handleFormReset}
-        submitButtonLabel="Creer"
-      />
+      {listTask && (
+        <TaskDetailForm
+          formState={formState}
+          onFieldChange={handleFormFieldChange}
+          onSubmit={handleFormSubmit}
+          onReset={handleFormReset}
+          submitButtonLabel="Creer"
+          listTask={listTask}
+        />
+      )}
     </PageContainer>
   );
 }

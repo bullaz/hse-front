@@ -8,14 +8,19 @@ export interface TaskDetail {
     description: string,
     workersNumber: number,
     date: string,
-    task: Task
+    task: Task,
+    codeSup: string,
+    codeWorker: string
 }
 
 export interface TaskDetailDto{
+    taskDetailId: number | null,
     description: string,
     workersNumber: number,
     date: string,
-    taskId: number
+    taskId: number,
+    codeSup: string,
+    codeWorker: string
 }
 
 
@@ -91,9 +96,10 @@ export async function getManyTaskDetail({
 }
 
 
-export async function createOne( axiosInstance: AxiosInstance,dto: TaskDetailDto): Promise<TaskDetail> {
-    const task = await addFutureTask(axiosInstance, dto);
-    return task;
+export async function createOne( axiosInstance: AxiosInstance,dto: Omit<TaskDetailDto,"taskDetailId">): Promise<TaskDetail | void> {
+    console.log("taskdeatil dto", dto);
+    // const task = await addFutureTask(axiosInstance, dto);
+    // return task;
 }
 
 
@@ -113,13 +119,14 @@ export async function deleteOne(taskDetailId: number, currentListTaskDetail: Tas
     return currentListTaskDetail.filter((taskDetail) => taskDetail.taskDetailId !== taskDetailId);
 }
 
-type ValidationResult = { issues: { message: string; path: (keyof TaskDetail)[] }[] };
+type ValidationResult = { issues: { message: string; path: (keyof TaskDetailDto)[] }[] };
 
-export function validate(taskDetail: Partial<TaskDetail>): ValidationResult {
+export function validate(taskDetail: Partial<TaskDetailDto>): ValidationResult {
     let issues: ValidationResult['issues'] = [];
 
-    if (!taskDetail.task) {
-        issues = [...issues, { message: 'La tâche est requis', path: ['task'] }];
+    if (!taskDetail.taskId) {
+        console.log('here');
+        issues = [...issues, { message: 'La tâche est requis', path: ['taskId'] }];
     }
     return { issues };
 }

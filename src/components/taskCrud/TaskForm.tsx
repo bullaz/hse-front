@@ -12,7 +12,7 @@ import Select, { type ActionMeta, type MultiValue } from "react-select";
 // import permitToWork from "../../assets/pictogram/organise/permit-to-work.png";
 // import mask from "../../assets/pictogram/epi/mask.png";
 import { CircularProgress } from "@mui/material";
-import { getAllQuestionsWithPicto } from "../../services/toko5Services";
+import { getAllEpi } from "../../services/toko5Services";
 import { useEffect, useState } from "react";
 import type { Question } from "../../data/Toko5";
 import { useAuth } from "../../context/AuthContext";
@@ -87,7 +87,7 @@ export default function TaskForm(props: TaskFormProps) {
     const handleReactSelectChange = React.useCallback(
         (newValues: MultiValue<TaskOption>, actionMeta: ActionMeta<TaskOption>) => {
             console.log(newValues);
-            const listId = newValues.map((taskOption)=>{
+            const listId = newValues.map((taskOption) => {
                 return taskOption.value;
             })
             onFieldChange(
@@ -116,7 +116,7 @@ export default function TaskForm(props: TaskFormProps) {
 
     useEffect(() => {
         const getListQuestion = async () => {
-            const list: Question[] = await getAllQuestionsWithPicto(axiosInstance);
+            const list: Question[] = await getAllEpi(axiosInstance);
 
             const options = list.map(question => ({
                 value: question.questionId,
@@ -152,20 +152,33 @@ export default function TaskForm(props: TaskFormProps) {
                         sx={{ width: "100%" }}
                     >
                         <FormGroup>
-                            <Grid container spacing={2} sx={{ mb: 2, width: "100%" }} direction="column">
-                                <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
-                                    <TextField
-                                        value={formValues.nom ?? ""}
-                                        onChange={handleTextFieldChange}
-                                        name="nom"
-                                        label="Nom"
-                                        error={!!formErrors.nom}
-                                        helperText={formErrors.nom ?? " "}
-                                        fullWidth
-                                    />
+                            <Grid container spacing={2} sx={{ mb: 2, width: "100%" }} direction="row">
+                                <Grid container spacing={2} sx={{ mb: 2, width: "100%" }} direction="row">
+                                    <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+                                        <TextField
+                                            value={formValues.nom ?? ""}
+                                            onChange={handleTextFieldChange}
+                                            name="nom"
+                                            label="Nom"
+                                            error={!!formErrors.nom}
+                                            helperText={formErrors.nom ?? " "}
+                                            fullWidth
+                                        />
+                                    </Grid>
+                                    <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex" }}>
+                                        <TextField
+                                            value={formValues.abbreviation ?? ""}
+                                            onChange={handleTextFieldChange}
+                                            name="abbreviation"
+                                            label="Abréviation"
+                                            error={!!formErrors.abbreviation}
+                                            helperText={formErrors.abbreviation ?? " "}
+                                            fullWidth
+                                        />
+                                    </Grid>
                                 </Grid>
 
-                                <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex", flexDirection: "column" }}>
+                                <Grid size={{ xs: 12, sm: 6 }} sx={{ display: "flex", flexDirection: 'column', alignSelf: 'flex-start', gap: 0 }}>
                                     <label htmlFor="question-select" style={{ marginBottom: '8px', fontSize: '12px' }}>
                                         Selectionner
                                     </label>
@@ -218,7 +231,7 @@ export default function TaskForm(props: TaskFormProps) {
                             <Button
                                 type="submit"
                                 variant="contained"
-                                size="large"
+                                // size="large"
                                 loading={isSubmitting}
                             >
                                 {submitButtonLabel}
